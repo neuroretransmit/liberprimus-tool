@@ -63,45 +63,58 @@ def key_to_shifts(key, doubles=False, lookup=RUNE_LOOKUP):
                 lookup_idx += 1
         return shifts
 
-def direct_translation(text, fast=True):
+def direct_translation(text, fast=True, overrides=None, excludes=None, lookup=RUNE_LOOKUP, shift=0):
     plaintext = ''
     for c in text:
         if fast:
-            plaintext += RUNE_LOOKUP[c][PLAINTEXT][0] if c in RUNE_LOOKUP else c
+            plaintext += lookup[c][PLAINTEXT][0] if c in lookup else c
         else:
             raise NotImplementedError("Permuatations mode not implemented yet")
     return plaintext
 
-def atbash(text, fast=True):
+def atbash(text, fast=True, overrides=None, lookup=ATBASH, shift=0):
     plaintext = ''
     for c in text:
         if fast:
-            plaintext += ATBASH[c][PLAINTEXT][0] if c in ATBASH else c
+            plaintext += lookup[c][PLAINTEXT][0] if c in lookup else c
         else:
             raise NotImplementedError("Permuatations mode not implemented yet")
     return plaintext
 
-def vigenere(text, key, fast=True, overrides=None):
+def vigenere(text, key=None, fast=True, overrides=None, lookup=RUNE_LOOKUP, shift=0, excludes=None, key_index=0):
     plaintext = ''
     shifts = key_to_shifts(key)
-    key_index = 0
-    override_occurences = { k: 0 for k, v in overrides.items() }
-    lookup_keys = list(RUNE_LOOKUP.keys())
+    key_index = key_index
+    if overrides:
+        override_occurences = { k: 0 for k, v in overrides.items() }
+    if excludes:
+        exclude_occurences = { k: 0 for k, v in excludes.items() }
+    lookup_keys = list(lookup.keys())
     for c in text:
         shift = shifts[key_index % len(shifts)]
-        if c in RUNE_LOOKUP:
+        if c in lookup:
             if overrides and c in overrides and len(overrides[c]) > 0: #and override_occurences[c] + 1 == overrides[c][0]:
                 override_occurences[c] += 1
                 if override_occurences[c] == overrides[c][0]:
                     if fast:
-                        plaintext += RUNE_LOOKUP[c][PLAINTEXT][0]
+                        plaintext += lookup[c][PLAINTEXT][0]
                         overrides[c] = overrides[c][1:]
+                        continue
+                    else:
+                        raise NotImplementedError("Permutations mode not implemented yet")
+            elif excludes and c in excludes and len(excludes[c]) > 0:
+                exclude_occurences[c] += 1
+                if exclude_occurences[c] == excludes[c][0]:
+                    if fast:
+                        plaintext += lookup[c][PLAINTEXT][0]
+                        excludes[c] = excludes[c][1:]
+                        key_index += 1
                         continue
                     else:
                         raise NotImplementedError("Permutations mode not implemented yet")
             if fast:
                 rune_lookup_key = lookup_keys[(lookup_keys.index(c) - shift) % len(lookup_keys)]
-                plaintext += RUNE_LOOKUP[rune_lookup_key][PLAINTEXT][0]
+                plaintext += lookup[rune_lookup_key][PLAINTEXT][0]
             else:
                 raise NotImplementedError("Permuatations mode not implemented yet")
             key_index += 1
@@ -117,6 +130,33 @@ def rot(text, shift=0, fast=True, lookup=RUNE_LOOKUP, overrides=None):
             if fast:
                 rune_lookup_key = lookup_keys[(lookup_keys.index(c) - shift) % len(lookup_keys)]
                 plaintext += lookup[rune_lookup_key][PLAINTEXT][0]
+            else:
+                raise NotImplementedError("Permutations mode not implemented yet")
+        else:
+            plaintext += c
+    return plaintext
+
+def running_shift(text, key=None, fast=True, lookup=RUNE_LOOKUP, overrides=None, excludes=None, shift=0):
+    plaintext = ''
+    lookup_keys = list(lookup.keys())
+    key_index = 0
+    if overrides:
+        override_occurences = {k: 0 for k, _ in overrides.items()}
+    for c in text:
+        if c in lookup:
+            if overrides and c in overrides and len(overrides[c]) > 0: #and override_occurences[c] + 1 == overrides[c][0]:
+                override_occurences[c] += 1
+                if override_occurences[c] == overrides[c][0]:
+                    if fast:
+                        plaintext += lookup[c][PLAINTEXT][0]
+                        overrides[c] = overrides[c][1:]
+                        continue
+                    else:
+                        raise NotImplementedError("Permutations mode not implemented yet")
+            if fast:
+                rune_lookup_key = lookup_keys[(lookup_keys.index(c) - key[key_index]) % len(lookup_keys)]
+                plaintext += lookup[rune_lookup_key][PLAINTEXT][0]
+                key_index += 1
             else:
                 raise NotImplementedError("Permutations mode not implemented yet")
         else:
