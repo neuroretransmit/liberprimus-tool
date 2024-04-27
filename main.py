@@ -113,7 +113,9 @@ def attempt_target():
             if target["runes"]:
                 print(text)
                 print("-----")
-            # TODO: Implement ciphers as arguments and call run_with_meta
+            # TODO: Implement cascading parts, i.e. words and paragraphs where the words are from
+            #       from the specified paragraph
+            # TODO: Implement ciphers as  arguments
     if "segments" in target:
         pass
     if "paragraphs" in target:
