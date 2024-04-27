@@ -9,7 +9,7 @@ from util import find
 # Line     : /
 # Page     : %
 
-def get_entity(nums, delimiter):
+def get_entities(nums, delimiter):
     texts = []
     with open("./data/transcription.txt") as lp:
         text = lp.read()
@@ -19,7 +19,7 @@ def get_entity(nums, delimiter):
     return texts
 
 def get_pages(nums):
-    return get_entity(nums, '%')
+    return get_entities(nums, '%')
 
-def get_sections(nums):
-    return get_entity(nums, '$')
+def get_segments(nums):
+    return get_entities(nums, '$')

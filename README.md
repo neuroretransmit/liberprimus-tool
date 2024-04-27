@@ -5,14 +5,19 @@ from the 2014 Cicada 3301 puzzle.
 
 ## Requirements
 
-* Python 3.9+
+* Python 3
+* virtualenv
 
 ## Running
 
 To decrypt pages with known solutions:
 
 ```bash
-$ ./main.py
+$ virtualenv venv
+$ source venv/bin/activate
+$ pip install -r requirements.txt
+(venv) $ 
+(venv) $ ./main.py
 ```
 
 ## Usage
