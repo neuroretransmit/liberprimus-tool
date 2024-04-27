@@ -1,19 +1,25 @@
 from util import find
 
-def get_pages(pages):
-    page_texts = []
+# Delimiters
+# Word     : -
+# Clause   : .
+# Paragraph: &
+# Segment  : $
+# Chapter  : §
+# Line     : /
+# Page     : %
+
+def get_entity(nums, delimiter):
+    texts = []
     with open("./data/transcription.txt") as lp:
         text = lp.read()
-        page_ends = list(find(text, '%'))
-        for page in pages:
-            page_texts.append(text[0 if page == 0 else page_ends[page-1]:page_ends[page]])
-    return page_texts
+        ends = list(find(text, delimiter))
+        for num in nums:
+            texts.append(text[0 if num == 0 else ends[num-1]:ends[num]])
+    return texts
+
+def get_pages(nums):
+    return get_entity(nums, '%')
 
 def get_sections(nums):
-    section_texts = []
-    with open("./data/transcription.txt") as lp:
-        text = lp.read()
-        section_ends = list(find(text, '$'))
-        for section in nums:
-            section_texts.append(text[0 if section == 0 else section_ends[section-1]:section_ends[section]])
-    return section_texts
+    return get_entity(nums, '$')

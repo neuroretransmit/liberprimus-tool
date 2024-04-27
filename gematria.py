@@ -63,7 +63,7 @@ def key_to_shifts(key, doubles=False, lookup=RUNE_LOOKUP):
                 lookup_idx += 1
         return shifts
 
-def direct_translation(text, fast=True, overrides=None, excludes=None, lookup=RUNE_LOOKUP, shift=0):
+def direct_translation(text, fast=True, skips=None, excludes=None, lookup=RUNE_LOOKUP, shift=0):
     plaintext = ''
     for c in text:
         if fast:
@@ -72,7 +72,7 @@ def direct_translation(text, fast=True, overrides=None, excludes=None, lookup=RU
             raise NotImplementedError("Permuatations mode not implemented yet")
     return plaintext
 
-def atbash(text, fast=True, overrides=None, lookup=ATBASH, shift=0):
+def atbash(text, fast=True, skips=None, lookup=ATBASH, shift=0):
     plaintext = ''
     for c in text:
         if fast:
@@ -81,24 +81,24 @@ def atbash(text, fast=True, overrides=None, lookup=ATBASH, shift=0):
             raise NotImplementedError("Permuatations mode not implemented yet")
     return plaintext
 
-def vigenere(text, key=None, fast=True, overrides=None, lookup=RUNE_LOOKUP, shift=0, excludes=None, key_index=0):
+def vigenere(text, key=None, fast=True, skips=None, lookup=RUNE_LOOKUP, shift=0, excludes=None, key_index=0):
     plaintext = ''
     shifts = key_to_shifts(key)
     key_index = key_index
-    if overrides:
-        override_occurences = { k: 0 for k, v in overrides.items() }
+    if skips:
+        skip_occurences = { k: 0 for k, v in skips.items() }
     if excludes:
         exclude_occurences = { k: 0 for k, v in excludes.items() }
     lookup_keys = list(lookup.keys())
     for c in text:
         shift = shifts[key_index % len(shifts)]
         if c in lookup:
-            if overrides and c in overrides and len(overrides[c]) > 0: #and override_occurences[c] + 1 == overrides[c][0]:
-                override_occurences[c] += 1
-                if override_occurences[c] == overrides[c][0]:
+            if skips and c in skips and len(skips[c]) > 0: #and skip_occurences[c] + 1 == skips[c][0]:
+                skip_occurences[c] += 1
+                if skip_occurences[c] == skips[c][0]:
                     if fast:
                         plaintext += lookup[c][PLAINTEXT][0]
-                        overrides[c] = overrides[c][1:]
+                        skips[c] = skips[c][1:]
                         continue
                     else:
                         raise NotImplementedError("Permutations mode not implemented yet")
@@ -122,7 +122,7 @@ def vigenere(text, key=None, fast=True, overrides=None, lookup=RUNE_LOOKUP, shif
             plaintext += c
     return plaintext
 
-def rot(text, shift=0, fast=True, lookup=RUNE_LOOKUP, overrides=None):
+def rot(text, shift=0, fast=True, lookup=RUNE_LOOKUP, skips=None):
     plaintext = ''
     lookup_keys = list(lookup.keys())
     for c in text:
@@ -136,20 +136,20 @@ def rot(text, shift=0, fast=True, lookup=RUNE_LOOKUP, overrides=None):
             plaintext += c
     return plaintext
 
-def running_shift(text, key=None, fast=True, lookup=RUNE_LOOKUP, overrides=None, excludes=None, shift=0):
+def running_shift(text, key=None, fast=True, lookup=RUNE_LOOKUP, skips=None, excludes=None, shift=0):
     plaintext = ''
     lookup_keys = list(lookup.keys())
     key_index = 0
-    if overrides:
-        override_occurences = {k: 0 for k, _ in overrides.items()}
+    if skips:
+        skip_occurences = {k: 0 for k, _ in skips.items()}
     for c in text:
         if c in lookup:
-            if overrides and c in overrides and len(overrides[c]) > 0: #and override_occurences[c] + 1 == overrides[c][0]:
-                override_occurences[c] += 1
-                if override_occurences[c] == overrides[c][0]:
+            if skips and c in skips and len(skips[c]) > 0: #and skip_occurences[c] + 1 == skips[c][0]:
+                skip_occurences[c] += 1
+                if skip_occurences[c] == skips[c][0]:
                     if fast:
                         plaintext += lookup[c][PLAINTEXT][0]
-                        overrides[c] = overrides[c][1:]
+                        skips[c] = skips[c][1:]
                         continue
                     else:
                         raise NotImplementedError("Permutations mode not implemented yet")
