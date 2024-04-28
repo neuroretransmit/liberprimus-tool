@@ -10,22 +10,18 @@ class GeneticAlgorithm:
             self.pool = random_specs()
 
     def evolve(self):
+
+
+    def evolve(self):
         while True:
-            self.pool.sort(key=lambda i: i.fitness)
-            # select two fittest
-            parents = self.pool[:2]
-            print(f"BEST: {self.pool[0].fitness}")
-            if parents[0].fitness == self.target:
-                break
-            # crossover
-            print("TODO: crossover")
-            offspring = parents[0].crossover(**parents[1].__dict__)
-            print("TODO: mutate")
-            offspring.mutate()
-            offspring.rate()
-            self.pool = self.pool[:-1]
-            self.pool.append(offspring)
-            # FIXME: Walk nested objects/mutate shifts/use wordlist for keys/exchange lookups
-            # TODO: See if fitness function can find breaks in the language and try to auto specify
-            #       skips/excludes
-            raise NotImplementedError("evolve not implemented yet")
+            new_population = []
+            for _ in range(self.population_size):
+                # parents selection
+                parent1, parent2 = self.select_parents()
+                # crossover
+                child = parent1.crossover(**parent2.__dict__)
+                # mutation
+                child.mutate()
+                new_population.append(child)
+    
+            self.population = new_population
