@@ -11,7 +11,7 @@ class GeneticAlgorithm:
 
     def evolve(self):
         while True:
-            self.pool.sort(key=lambda i: i.fitness)
+            self.pool.sort(key=lambda i: max([v for k, v in i.fitness.items()]))
             # select two fittest
             parents = self.pool[:2]
             print(f"BEST: {self.pool[0].fitness}")

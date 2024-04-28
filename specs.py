@@ -3,7 +3,7 @@ from lp import get_pages
 from crypto.gematria import RUNE_LOOKUP
 from crypto.vigenere import vigenere
 from abc import ABC, abstractmethod
-from lingua import Language, LanguageDetectorBuilder
+from lingua import Language, LanguageDetectorBuilder, ConfidenceValue
 
 LANGUAGES = [Language.ENGLISH, Language.LATIN]
 DETECTOR = LanguageDetectorBuilder.from_languages(*LANGUAGES).build()
@@ -96,7 +96,10 @@ class SolutionSpec(DNA):
         self.show_runes = show_runes
         # Used by ga.py (Genetic Algorithm)
         self.plaintext = None
-        self.fitness = 0
+        self.fitness = {
+            "eng": 0,
+            "lat": 0
+        }
 
     def run(self, silent=False):
         """ Generic cradle to run decryptions """
@@ -134,7 +137,8 @@ class SolutionSpec(DNA):
         # TODO: Store list of confidences for multiple sections
         # TODO: Iterate overplaintext for multiple sections when implemented, see run()
         confidence = DETECTOR.compute_language_confidence_values(self.plaintext)
-        self.fitness = confidence
+        self.fitness["eng"] = next(obj.value for obj in confidence if obj.language == Language.ENGLISH)
+        self.fitness["lat"] = next(obj.value for obj in confidence if obj.language == Language.LATIN)
         print("FITNESS:", self.fitness)
 
     def crossover(self, **entries):
