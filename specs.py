@@ -152,6 +152,22 @@ class SolutionSpec(DNA):
     def mutate(self):
         pass
 
+    def crossover(self, **kwargs):
+        child = SolutionSpec()
+        for key in self.__dict__:
+            if random.random() < 0.5:
+                setattr(child, key, self.__dict__[key])
+            else:
+                setattr(child, key, kwargs[key])
+        return child
+
+    def mutate(self):
+        mutation_rate = 0.1  # Adjust this mutation rate
+        for key in self.__dict__:
+            if random.random() < mutation_rate:
+                # Example of mutation: increment or decrement by a small random amount
+                setattr(self, key, self.__dict__[key] + random.uniform(-0.1, 0.1))
+
 def random_spec():
     raise NotImplementedError("random_spec not implemented")
 
