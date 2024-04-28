@@ -2,8 +2,12 @@
 
 from args import parse_args
 from lp import get_pages, get_segments
-from gematria import direct_translation, atbash, vigenere, rot, running_shift, ATBASH, RUNE_LOOKUP
-from math import  totients
+from crypto.gematria import direct_translation
+from crypto.atbash import atbash, ATBASH
+from crypto.rot import rot
+from crypto.vigenere import vigenere
+from crypto.running_shift import running_shift
+from crypto.math import totients
 from specs import SolutionSpec, CryptoSpec, TextRetrievalSpec
 from ga import GeneticAlgorithm
 

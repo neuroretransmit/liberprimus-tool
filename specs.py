@@ -1,5 +1,5 @@
 from lp import get_pages
-from gematria import RUNE_LOOKUP
+from crypto.gematria import RUNE_LOOKUP
 
 class TextRetrievalSpec:
     def __init__(self, nums: list, mode=get_pages):

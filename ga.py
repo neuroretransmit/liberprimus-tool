@@ -1,5 +1,5 @@
 from specs import random_specs
-from random import getrandombits
+from random import getrandbits
 
 class GeneticAlgorithm:
     def __init__(self, target: float, initial_pool:list = None):
@@ -22,7 +22,7 @@ class GeneticAlgorithm:
             # TODO: See if fitness function can find breaks in the language and try to auto specify
             #       skips/excludes
             for attr, v in vars(parents[0]).items():
-                if getrandombits(1):
+                if getrandbits(1):
                     parents[1][attr] = v
         raise NotImplementedError("evolve not implemented yet")
 
