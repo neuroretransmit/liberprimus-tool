@@ -22,6 +22,9 @@ class GeneticAlgorithm:
             offspring = parents[0].crossover(**parents[1].__dict__)
             print("TODO: mutate")
             offspring.mutate()
+            offspring.rate()
+            self.pool = self.pool[:-1]
+            self.pool.append(offspring)
             # FIXME: Walk nested objects/mutate shifts/use wordlist for keys/exchange lookups
             # TODO: See if fitness function can find breaks in the language and try to auto specify
             #       skips/excludes

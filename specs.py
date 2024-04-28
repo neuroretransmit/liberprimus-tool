@@ -3,6 +3,10 @@ from lp import get_pages
 from crypto.gematria import RUNE_LOOKUP
 from crypto.vigenere import vigenere
 from abc import ABC, abstractmethod
+from lingua import Language, LanguageDetectorBuilder
+
+LANGUAGES = [Language.ENGLISH, Language.LATIN]
+DETECTOR = LanguageDetectorBuilder.from_languages(*LANGUAGES).build()
 
 class DNA(ABC):
     @abstractmethod
@@ -96,7 +100,6 @@ class SolutionSpec(DNA):
 
     def run(self, silent=False):
         """ Generic cradle to run decryptions """
-        # TODO: Rate fitness using lingua-language-detector
         for num, text in zip(self.retrieval.nums, self.retrieval.retrieve()):
             if not silent:
                 # FIXME: This shouldn't always show PAGE, we can retrieve segments, etc.
@@ -114,19 +117,25 @@ class SolutionSpec(DNA):
                 if not silent:
                     print(plaintext)
                 else:
+                    # TODO: Store list of plaintexts for multiple sections
                     self.plaintext = plaintext
             else:
                 plaintext = self.crypto.scheme(text, lookup=self.crypto.lookup, shift=self.crypto.shift, skips=self.crypto.skips)
                 if not silent:
                     print(plaintext)
                 else:
+                    # TODO: Store list of plaintexts for multiple sections
                     self.plaintext = plaintext
 
     def rate(self):
         """ Rate the fitness of this spec's outcome """
         self.run(silent=True)
-        # TODO: Rate fitness
-        raise NotImplementedError("rate is not implemented")
+        # TODO: Sanitize plaintext
+        # TODO: Store list of confidences for multiple sections
+        # TODO: Iterate overplaintext for multiple sections when implemented, see run()
+        confidence = DETECTOR.compute_language_confidence_values(self.plaintext)
+        self.fitness = confidence
+        print("FITNESS:", self.fitness)
 
     def crossover(self, **entries):
         offspring = copy.deepcopy(self)
