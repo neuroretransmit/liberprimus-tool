@@ -1,3 +1,5 @@
+from collections.abc import Mapping, Set, Sequence
+
 # Use to get start/end of substrings within the Liber Primus for lexing
 def find(haystack, needle):
     """ Find the start of all (possibly-overlapping) instances of needle in haystack """
