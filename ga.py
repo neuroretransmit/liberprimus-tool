@@ -24,10 +24,9 @@ class GeneticAlgorithm:
             offspring.mutate()
             # Run the spec and grab fitness
             offspring.rate()
-            # Pop the worst individual out of the genepool
-            self.pool = self.pool[:-1]
+            # Pop the worst individual out of the genepool in-place
+            self.pool.pop()
             # Add new offspring
             self.pool.append(offspring)
             # TODO: See if fitness function can find breaks in the language and try to auto specify
             #       skips/excludes
-
