@@ -5,9 +5,10 @@ from abc import ABC, abstractmethod
 
 class DNA(ABC):
     @abstractmethod
-    def crossover(self, **entries):
+    def crossover(self, *args, **kwargs):
         pass
 
+    @abstractmethod
     def mutate(self):
         pass
 
@@ -26,7 +27,7 @@ class TextRetrievalSpec(DNA):
     # TODO: Implement crossover
     def crossover(self, **entries):
         text_retrieval_dict = self.__dict__
-        for attr, v in entries:
+        for attr, v in entries.items():
             if attr == "mode":
                 pass
             elif attr == "nums":
@@ -34,6 +35,9 @@ class TextRetrievalSpec(DNA):
             else:
                 continue
         self.__dict__.update(text_retrieval_dict)
+
+    def mutate(self):
+        pass
 
 class CryptoSpec(DNA):
     def __init__(self, scheme, key=None, shift=0, lookup=RUNE_LOOKUP, skips=None, excludes=None):
@@ -57,7 +61,7 @@ class CryptoSpec(DNA):
     # TODO: Implement crossover
     def crossover(self, **entries):
         crypto_dict = self.__dict__
-        for attr, v in entries:
+        for attr, v in entries.items():
             if attr == "scheme":
                 pass
             elif attr == "scheme" and v == vigenere:
@@ -72,6 +76,9 @@ class CryptoSpec(DNA):
             elif attr == "lookup":
                 pass
         self.__dict__.update(crypto_dict)
+
+    def mutate(self):
+        pass
 
 class SolutionSpec(DNA):
     def __init__(self, retrieval: TextRetrievalSpec, crypto: CryptoSpec, show_runes: bool = False):
@@ -118,14 +125,18 @@ class SolutionSpec(DNA):
 
     def crossover(self, **entries):
         solution_dict = self.__dict__
-        for attr, v in entries:
+        print(entries)
+        for attr, v in entries.items():
             if attr in {"crypto", "retrieval"}:
-                v.crossover(entries[attr].__dict__)
+                v.crossover(**entries[attr].__dict__)
                 # FIXME: modifying while iterating - use copy
                 solution_dict[attr] = v
             else:
                 continue
         self.__dict__.update(solution_dict)
+
+    def mutate(self):
+        pass
 
 def random_spec():
     raise NotImplementedError("random_spec not implemented")

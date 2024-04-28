@@ -19,6 +19,7 @@ class GeneticAlgorithm:
                 break
             # crossover
             print("TODO: crossover")
+            parents[0].crossover(**parents[1].__dict__)
             print("TODO: mutate")
             # FIXME: Walk nested objects/mutate shifts/use wordlist for keys/exchange lookups
             # TODO: See if fitness function can find breaks in the language and try to auto specify
