@@ -3,7 +3,7 @@ from lp import get_pages
 from crypto.gematria import RUNE_LOOKUP
 from crypto.vigenere import vigenere
 from abc import ABC, abstractmethod
-from lingua import Language, LanguageDetectorBuilder, ConfidenceValue
+from lingua import Language, LanguageDetectorBuilder
 
 LANGUAGES = [Language.ENGLISH, Language.LATIN]
 DETECTOR = LanguageDetectorBuilder.from_languages(*LANGUAGES).build()
@@ -154,7 +154,25 @@ class SolutionSpec(DNA):
         return offspring
 
     def mutate(self):
+        # FIXME: use wordlist for keys/exchange lookups
         pass
+
+    # TODO: Use this implementation when FSM/rule engine are integrated, d4vi's is much better
+    #def crossover(self, **kwargs):
+    #    child = SolutionSpec()
+    #    for key in self.__dict__:
+    #        if random.random() < 0.5:
+    #            setattr(child, key, self.__dict__[key])
+    #        else:
+    #            setattr(child, key, kwargs[key])
+    #    return child
+
+    #def mutate(self):
+    #    mutation_rate = 0.1  # Adjust this mutation rate
+    #    for key in self.__dict__:
+    #        if random.random() < mutation_rate:
+    #            # Example of mutation: increment or decrement by a small random amount
+    #            setattr(self, key, self.__dict__[key] + random.uniform(-0.1, 0.1))
 
 def random_spec():
     raise NotImplementedError("random_spec not implemented")
