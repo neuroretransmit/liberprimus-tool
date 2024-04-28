@@ -1,3 +1,4 @@
+import copy
 from lp import get_pages
 from crypto.gematria import RUNE_LOOKUP
 from crypto.vigenere import vigenere
@@ -26,6 +27,7 @@ class TextRetrievalSpec(DNA):
 
     # TODO: Implement crossover
     def crossover(self, **entries):
+        offspring = copy.deepcopy(self)
         text_retrieval_dict = self.__dict__
         for attr, v in entries.items():
             if attr == "mode":
@@ -34,7 +36,8 @@ class TextRetrievalSpec(DNA):
                 pass
             else:
                 continue
-        self.__dict__.update(text_retrieval_dict)
+        offspring.__dict__.update(text_retrieval_dict)
+        return offspring
 
     def mutate(self):
         pass
@@ -60,6 +63,7 @@ class CryptoSpec(DNA):
 
     # TODO: Implement crossover
     def crossover(self, **entries):
+        offspring = copy.deepcopy(self)
         crypto_dict = self.__dict__
         for attr, v in entries.items():
             if attr == "scheme":
@@ -75,7 +79,8 @@ class CryptoSpec(DNA):
                 pass
             elif attr == "lookup":
                 pass
-        self.__dict__.update(crypto_dict)
+        offspring.__dict__.update(crypto_dict)
+        return offspring
 
     def mutate(self):
         pass
@@ -124,16 +129,16 @@ class SolutionSpec(DNA):
         raise NotImplementedError("rate is not implemented")
 
     def crossover(self, **entries):
+        offspring = copy.deepcopy(self)
         solution_dict = self.__dict__
-        print(entries)
         for attr, v in entries.items():
             if attr in {"crypto", "retrieval"}:
                 v.crossover(**entries[attr].__dict__)
-                # FIXME: modifying while iterating - use copy
                 solution_dict[attr] = v
             else:
                 continue
-        self.__dict__.update(solution_dict)
+        offspring.__dict__.update(solution_dict)
+        return offspring
 
     def mutate(self):
         pass

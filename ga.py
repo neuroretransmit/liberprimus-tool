@@ -4,7 +4,7 @@ from random import getrandbits
 class GeneticAlgorithm:
     def __init__(self, target: float, initial_pool:list = []):
         self.target = target
-        if initial_pool:
+        if initial_pool != []:
             self.pool = initial_pool
         else:
             self.pool = random_specs()
@@ -19,8 +19,9 @@ class GeneticAlgorithm:
                 break
             # crossover
             print("TODO: crossover")
-            parents[0].crossover(**parents[1].__dict__)
+            offspring = parents[0].crossover(**parents[1].__dict__)
             print("TODO: mutate")
+            offspring.mutate()
             # FIXME: Walk nested objects/mutate shifts/use wordlist for keys/exchange lookups
             # TODO: See if fitness function can find breaks in the language and try to auto specify
             #       skips/excludes
