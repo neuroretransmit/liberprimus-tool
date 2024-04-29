@@ -5,7 +5,7 @@ ciphertext within Liber Primus.
 
 ## Members working on this
 
-neuroretransmit/d4vi, feel free to DM either on Discord.
+neuroretransmit/d4vi_sudo, feel free to DM either on Discord.
 
 ## Overview
 
