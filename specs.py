@@ -1,4 +1,5 @@
 import copy
+import random
 from lp import get_pages
 from crypto.gematria import RUNE_LOOKUP
 from crypto.vigenere import vigenere
@@ -9,6 +10,8 @@ LANGUAGES = [Language.ENGLISH, Language.LATIN]
 DETECTOR = LanguageDetectorBuilder.from_languages(*LANGUAGES).build()
 
 class DNA(ABC):
+    mutation_rate = 0.1
+
     @abstractmethod
     def crossover(self, *args, **kwargs):
         pass
@@ -34,9 +37,11 @@ class TextRetrievalSpec(DNA):
         offspring = copy.deepcopy(self)
         text_retrieval_dict = self.__dict__
         for attr, v in entries.items():
-            if attr == "mode":
+            if attr == "mode" and random.random() < self.mutation_rate:
+                print("crossing over retrieval.mode")
                 pass
-            elif attr == "nums":
+            elif attr == "nums" and random.random() < self.mutation_rate:
+                print("crossing over retrieval.nums")
                 pass
             else:
                 continue
@@ -70,18 +75,25 @@ class CryptoSpec(DNA):
         offspring = copy.deepcopy(self)
         crypto_dict = self.__dict__
         for attr, v in entries.items():
-            if attr == "scheme":
+            if attr == "scheme" and random.random() < self.mutation_rate:
+                print("crossing over crypto.scheme")
                 pass
-            elif attr == "scheme" and v == vigenere:
-                if attr == "key" and v:
+            # TODO: Extract keyable schemes to variable that can be easily referenced
+            elif attr == "scheme" and v in [vigenere] and random.random() < self.mutation_rate:
+                if attr == "key" and v and random.random() < self.mutation_rate:
+                    print("crossing over crypto.key")
                     pass
-                elif attr == "skips":
+                elif attr == "skips" and random.random() < self.mutation_rate:
+                    print("crossing over crypto.skips")
                     pass
-                elif attr == "excludes":
+                elif attr == "excludes" and random.random() < self.mutation_rate:
+                    print("crossing over crypto.excludes")
                     pass
-            elif attr == "shift":
+            elif attr == "shift" and random.random() < self.mutation_rate:
+                print("crossing over crypto.shift")
                 pass
-            elif attr == "lookup":
+            elif attr == "lookup" and random.random() < self.mutation_rate:
+                print("crossing over crypto.lookup")
                 pass
         offspring.__dict__.update(crypto_dict)
         return offspring
@@ -147,10 +159,10 @@ class SolutionSpec(DNA):
         for attr, v in entries.items():
             if attr in {"crypto", "retrieval"}:
                 v.crossover(**entries[attr].__dict__)
-                solution_dict[attr] = v
+                setattr(offspring, attr, v)
             else:
                 continue
-        offspring.__dict__.update(solution_dict)
+        #offspring.__dict__.update(solution_dict)
         return offspring
 
     def mutate(self):

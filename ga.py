@@ -24,15 +24,15 @@ class GeneticAlgorithm:
             offspring = parents[0].crossover(**parents[1].__dict__)
             # TODO: finish mutation
             offspring.mutate()
-            # TODO: check if solution tried in database and continue if it has
             scheme_name = getattr(offspring.crypto.scheme, '__name__', 'Unknown')
             skips = json.dumps(offspring.crypto.skips) if offspring.crypto.skips is not None else None
             excludes = json.dumps(offspring.crypto.excludes) if offspring.crypto.excludes is not None else None
+            # Check if solution has been attempted before
             if solution_exists(scheme_name, offspring.crypto.key, offspring.crypto.shift, skips, excludes):
                 continue
             # Run the spec and grab fitness
             offspring.rate()
-            # TODO: add solution to database
+            # Add solution to database
             max_confidence = max([v for k, v in offspring.fitness.items()])
             max_confidence_lang = next(k for k, v in offspring.fitness.items() if v == max_confidence)
             insert_solution_attempt(scheme_name, offspring.crypto.key, offspring.crypto.shift, max_confidence, max_confidence_lang, skips, excludes)
