@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import os
+
 from args import parse_args
 from lp import get_pages, get_segments
 from crypto.gematria import direct_translation
@@ -49,6 +51,8 @@ SOLUTIONS = {
 }
 
 def ga():
+    if not os.path.isfile("./solution_attempts.db"):
+        raise RuntimeError("database not found, please run ./scripts/setup-db.sh")
     ga = GeneticAlgorithm(0.01, initial_pool=[SOLUTIONS[0], SOLUTIONS[1]])
     ga.evolve()
 
