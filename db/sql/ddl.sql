@@ -18,7 +18,7 @@ CREATE TABLE solution_attempts (
   shift INT,
   max_confidence REAL NOT NULL,
   max_confidence_lang TEXT,
-  skips TEXT NOT NULL,
-  excludes TEXT NOT NULL,
+  skips JSON NOT NULL,
+  excludes JSON NOT NULL,
   UNIQUE(scheme, key, shift, skips, excludes) ON CONFLICT IGNORE
 );

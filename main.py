@@ -53,7 +53,7 @@ SOLUTIONS = {
 def ga():
     if not os.path.isfile("./solution_attempts.db"):
         raise RuntimeError("database not found, please run ./scripts/setup-db.sh")
-    ga = GeneticAlgorithm(0.01, initial_pool=[SOLUTIONS[0], SOLUTIONS[1]])
+    ga = GeneticAlgorithm(1, initial_pool=[SOLUTIONS[0], SOLUTIONS[1]])
     ga.evolve()
 
 def known():
@@ -63,7 +63,7 @@ def known():
 
 def attempt_target():
     """ Attempt decryption on specified pieces of liber primus """
-    print(target)
+    print("ARGS:", target)
     if "ga" in target:
         ga()
     elif "pages" in target:

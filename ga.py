@@ -14,11 +14,11 @@ class GeneticAlgorithm:
     def evolve(self):
         while True:
             # rank population by fitness
-            self.pool.sort(key=lambda i: max([v for k, v in i.fitness.items()]))
+            self.pool.sort(key=lambda i: max([v for k, v in i.fitness.items()]), reverse=True)
             # select two fittest
             parents = self.pool[:2]
             print(f"BEST: {self.pool[0].fitness}")
-            if parents[0].fitness == self.target:
+            if max([v for k, v in parents[0].fitness.items()]) >= self.target:
                 break
             # TODO: finish crossover
             offspring = parents[0].crossover(**parents[1].__dict__)

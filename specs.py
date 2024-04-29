@@ -1,5 +1,6 @@
 import copy
 import random
+from functools import reduce
 from lp import get_pages
 from crypto.gematria import RUNE_LOOKUP
 from crypto.vigenere import vigenere
@@ -116,6 +117,7 @@ class SolutionSpec(DNA):
 
     def run(self, silent=False):
         """ Generic cradle to run decryptions """
+        plaintexts = []
         for num, text in zip(self.retrieval.nums, self.retrieval.retrieve()):
             if not silent:
                 # FIXME: This shouldn't always show PAGE, we can retrieve segments, etc.
@@ -133,15 +135,15 @@ class SolutionSpec(DNA):
                 if not silent:
                     print(plaintext)
                 else:
-                    # TODO: Store list of plaintexts for multiple sections
-                    self.plaintext = plaintext
+                    plaintexts.append(plaintext)
             else:
                 plaintext = self.crypto.scheme(text, lookup=self.crypto.lookup, shift=self.crypto.shift, skips=self.crypto.skips)
                 if not silent:
                     print(plaintext)
                 else:
-                    # TODO: Store list of plaintexts for multiple sections
-                    self.plaintext = plaintext
+                    plaintexts.append(plaintext)
+        if silent:
+            self.plaintext = plaintexts
 
     def rate(self):
         """ Rate the fitness of this spec's outcome """
@@ -149,10 +151,15 @@ class SolutionSpec(DNA):
         # TODO: Sanitize plaintext
         # TODO: Store list of confidences for multiple sections
         # TODO: Iterate overplaintext for multiple sections when implemented, see run()
-        confidence = DETECTOR.compute_language_confidence_values(self.plaintext)
-        self.fitness["eng"] = next(obj.value for obj in confidence if obj.language == Language.ENGLISH)
-        self.fitness["lat"] = next(obj.value for obj in confidence if obj.language == Language.LATIN)
-        print("FITNESS:", self.fitness)
+        confidences = [DETECTOR.compute_language_confidence_values(plaintext) for plaintext in self.plaintext]
+        eng = []
+        lat = []
+        for confidence in confidences:
+            eng.append(next(obj.value for obj in confidence if obj.language == Language.ENGLISH))
+            lat.append(next(obj.value for obj in confidence if obj.language == Language.LATIN))
+        self.fitness["eng"] = reduce(lambda a, b: a+b, eng) / len(eng)
+        self.fitness["lat"] = reduce(lambda a, b: a+b, lat) / len(lat)
+        print("FITNESS:", self.fitness) 
 
     def crossover(self, **entries):
         offspring = copy.deepcopy(self)
