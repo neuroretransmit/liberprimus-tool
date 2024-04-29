@@ -2,33 +2,31 @@
 
 import random
 
-from specs import SolutionSpec, TextRetrievalSpec, CryptoSpec
-from rules.fsm import FSM
-from rules.engine import RuleEngine
+from specs2 import SolutionSpec, TextRetrievalSpec, CryptoSpec
+from rules.fsm2 import FSM
+from rules.engine2 import RuleEngine
 from crypto.vigenere import vigenere
 from crypto.atbash import ATBASH, RUNE_LOOKUP
 from lp import get_pages, get_segments
 
 if __name__ == "__main__":
-    fsm = FSM()
-
     state_transitions = {
         "crypto": {
             # We can define all rule transitions for crypto based on scheme
             "scheme": {
                 "vigenere": {
-                    "includes": ["$keyed", "*"]
+                    "$includes": ["$keyed", "*"]
                 },
                 "running_shift": {
-                    "includes": ["$keyed", "*"],
-                    "excludes": ["$keyed.key"],
+                    "$includes": ["$keyed", "*"],
+                    "$excludes": ["$keyed.key"],
                     "key": lambda: [random.sample(range(-29, 29), random.randint(0, 10))]
                 },
                 "atbash": {
-                    "includes": ["*"]
+                    "$includes": ["*"]
                 },
                 "rot": {
-                    "includes": ["*"]
+                    "$includes": ["*"]
                 },
                 # Attrs prepended with $ should be referenced by their appropriate types
                 "$keyed": {
@@ -51,10 +49,13 @@ if __name__ == "__main__":
         }
     }
 
-    # Using lambdas in the rules - we can call and still get different values rather than inserting
-    # logic in the target function
-    print(state_transitions["crypto"]["scheme"]["*"]["lookup"]())
-    print(state_transitions["crypto"]["scheme"]["*"]["lookup"]())
+    crypto = CryptoSpec(vigenere, key="TEST")
+    retrieval = TextRetrievalSpec([0])
+    spec = SolutionSpec(retrieval, crypto)
+
+    fsm = FSM(states=state_transitions)
+    fsm.set_state(spec)
+    fsm.transition()
 
     # FIXME: Didn't finish implementing - just wanted to give you a snapshot of my vision for this
     state = "crypto.scheme"
