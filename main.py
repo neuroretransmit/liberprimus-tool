@@ -70,12 +70,11 @@ def attempt_target():
         page_texts = get_pages(target["pages"])
         for page, text in zip(target["pages"], page_texts):
             print(f"=== PAGE {page} ===")
-            if target["runes"]:
-                print(text)
-                print("-----")
+            print(text)  # show page
+            print("-----")
             # TODO: Implement cascading parts, i.e. words and paragraphs where the words are from
             #       from the specified paragraph
-            # TODO: Implement ciphers as  arguments
+            # TODO: Implement ciphers as arguments
     if "segments" in target:
         pass
     if "paragraphs" in target:
