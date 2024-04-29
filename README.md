@@ -19,6 +19,18 @@ $ source venv/bin/activate
 (venv) $ ./main.py <args here>
 ```
 
+### Genetic Algorithm
+
+```bash
+(venv) $ ./main.py --ga
+```
+
+### Known Solutions
+
+```bash
+(venv) $ ./main.py
+```
+
 ## Design
 
 See [DESIGN.md](./DESIGN.md)
