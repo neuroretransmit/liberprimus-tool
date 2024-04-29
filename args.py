@@ -70,12 +70,15 @@ def parse_args():
     parser.add_argument('--clauses', nargs='+', type=int)
     parser.add_argument('--words', nargs='+', type=int)
     parser.add_argument('--runes', action=argparse.BooleanOptionalAction)
+    parser.add_argument('--ga', action=argparse.BooleanOptionalAction)
     args = parser.parse_args()
 
     validations = get_transcription_validations()
     target = {}
 
     # TODO: Finite state machine if multiple selected to validate through dict
+    if args.ga:
+        target["ga"] = args.ga
     if args.pages:
         pages = set(args.pages)
         if len(pages) > 0 and len(pages - set(range(0, validations["pages"]["num"]))) > 0:

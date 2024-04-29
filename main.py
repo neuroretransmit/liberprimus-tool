@@ -48,17 +48,21 @@ SOLUTIONS = {
     72: SolutionSpec(TextRetrievalSpec([72]), CryptoSpec(direct_translation))
 }
 
+def ga():
+    ga = GeneticAlgorithm(0.01, initial_pool=[SOLUTIONS[0], SOLUTIONS[1]])
+    ga.evolve()
+
 def known():
     """ Decrypt known pages """
     for spec in SOLUTIONS.values():
         spec.run()
-    ga = GeneticAlgorithm(0.01, initial_pool=[SOLUTIONS[0], SOLUTIONS[1]])
-    ga.evolve()
 
 def attempt_target():
     """ Attempt decryption on specified pieces of liber primus """
     print(target)
-    if "pages" in target:
+    if "ga" in target:
+        ga()
+    elif "pages" in target:
         page_texts = get_pages(target["pages"])
         for page, text in zip(target["pages"], page_texts):
             print(f"=== PAGE {page} ===")
