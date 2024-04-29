@@ -1,6 +1,6 @@
 class FSM:
-    def __init__(self):
-        self.states = {}  # Dictionary to hold states and their transitions
+    def __init__(self, states = dict()):
+        self.states = states  # Dictionary to hold states and their transitions
         self.current_state = None
 
     def add_state(self, name, transitions):
