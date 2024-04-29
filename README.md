@@ -10,10 +10,8 @@ from the 2014 Cicada 3301 puzzle.
 
 ## Running
 
-To decrypt pages with known solutions:
-
 ```bash
-$ ./scripts/setup-db.sh # Create database with DDL specified in db/sql/ddl.sql
+$ docker-compose up -d
 $ virtualenv venv
 $ source venv/bin/activate
 (venv) $ pip install -r requirements.txt
