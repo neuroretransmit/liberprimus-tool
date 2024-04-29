@@ -1,13 +1,54 @@
 import copy
 import random
-from lp import get_pages
+from lp import get_pages, get_segments
+from rules.fsm import FSM
 from crypto.gematria import RUNE_LOOKUP
 from crypto.vigenere import vigenere
+from crypto.atbash import ATBASH
 from abc import ABC, abstractmethod
 from lingua import Language, LanguageDetectorBuilder
 
 LANGUAGES = [Language.ENGLISH, Language.LATIN]
 DETECTOR = LanguageDetectorBuilder.from_languages(*LANGUAGES).build()
+
+state_transitions = {
+    "crypto": {
+        # We can define all rule transitions for crypto based on scheme
+        "scheme": {
+            "vigenere": {
+                "$includes": ["$keyed", "*"]
+            },
+            "running_shift": {
+                "$includes": ["$keyed", "*"],
+                "$excludes": ["$keyed.key"],
+                "key": lambda: [random.sample(range(-29, 29), random.randint(0, 10))]
+            },
+            "atbash": {
+                "$includes": ["*"]
+            },
+            "rot": {
+                "$includes": ["*"]
+            },
+            # Attrs prepended with $ should be referenced by their appropriate types
+            "$keyed": {
+                # TODO: Will pick from wordlist in future
+                "key": lambda: random.choice(["DIUINITY", "WELCOMEPILGRIM", "FIRFUMFERENCE"]),
+                "excludes": {'a': lambda: random.randint(0, 10), 'b': lambda: random.randint(0, 10)},
+                "skips": {},
+                "key_index": lambda: random.randint(0, len("MUTATED") - 1)
+            },
+            # * denotes common attributes referenced in all
+            "*": {
+                "lookup": lambda: random.choice([ATBASH, RUNE_LOOKUP]), # Should probably create random lookups too
+                "shift": lambda: random.randint(-29, 29)
+            }
+        }
+    },
+    "retrieval": {
+        "mode": lambda: random.choice([get_pages, get_segments]),
+        # TODO: nums - using tooling in argument validations to pull valid ranges
+    }
+}
 
 class DNA(ABC):
     crossover_rate = 0.1
@@ -113,6 +154,7 @@ class SolutionSpec(DNA):
             "eng": 0,
             "lat": 0
         }
+        self.fsm = FSM(states=state_transitions)
 
     def run(self, silent=False):
         """ Generic cradle to run decryptions """
@@ -173,8 +215,10 @@ class SolutionSpec(DNA):
         return offspring
 
     def mutate(self):
-        # FIXME: use wordlist for keys/exchange lookups
-        pass
+        self.fsm.set_state(self)
+        self.fsm.transition(self.mutation_rate)
+        self.__dict__.update(self.fsm.current_state.__dict__)
+
 
     # TODO: Use this implementation when FSM/rule engine are integrated, d4vi's is much better
     #def crossover(self, **kwargs):

@@ -2,9 +2,8 @@
 
 import random
 
-from specs2 import SolutionSpec, TextRetrievalSpec, CryptoSpec
-from rules.fsm2 import FSM
-from rules.engine2 import RuleEngine
+from specs import SolutionSpec, TextRetrievalSpec, CryptoSpec
+from rules.fsm import FSM
 from crypto.vigenere import vigenere
 from crypto.atbash import ATBASH, RUNE_LOOKUP
 from lp import get_pages, get_segments
@@ -55,12 +54,4 @@ if __name__ == "__main__":
 
     fsm = FSM(states=state_transitions)
     fsm.set_state(spec)
-    fsm.transition()
-
-    # FIXME: Didn't finish implementing - just wanted to give you a snapshot of my vision for this
-    state = "crypto.scheme"
-    fsm.set_state(state)
-    rule_engine = RuleEngine(fsm)
-    mutated_parameters = rule_engine.mutate_parameters()
-    print("Mutated parameters:", mutated_parameters)
-
+    fsm.transition(0.1)

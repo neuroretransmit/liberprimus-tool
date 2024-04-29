@@ -30,16 +30,15 @@ def connect(config):
     except (psycopg2.DatabaseError, Exception) as error:
         print(error)
 
+conn = connect(load_config())
 
 def insert_solution_attempt(scheme, key, shift, max_confidence, max_confidence_lang, skips, excludes):
-    conn = connect(load_config())
     cursor = conn.cursor()
     cursor.execute(f'INSERT INTO {TABLE_NAME} (scheme, key, shift, max_confidence, max_confidence_lang, skips, excludes) VALUES (%s, %s, %s, %s, %s, %s, %s);',
                  (scheme, key, shift, max_confidence, max_confidence_lang, json.dumps(skips), json.dumps(excludes)))
     conn.commit()
 
 def solution_exists(scheme, key, shift, skips, excludes):
-    conn = connect(load_config())
     cursor = conn.cursor()
     cursor.execute(f"SELECT * FROM {TABLE_NAME} WHERE scheme = %s AND key = %s AND shift = %s AND skips @> %s AND excludes @> %s;",
                  (scheme, key, shift, json.dumps(skips), json.dumps(excludes)))
