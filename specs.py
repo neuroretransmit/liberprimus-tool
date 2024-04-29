@@ -143,6 +143,36 @@ class SolutionSpec(DNA):
                     # TODO: Store list of plaintexts for multiple sections
                     self.plaintext = plaintext
 
+    #def run(self, section_type="PAGE", silent=False):
+    #    """ Generic cradle to run decryptions """
+    #    plaintexts = []  # List to store decrypted texts for multiple sections
+    #    for num, text in zip(self.retrieval.nums, self.retrieval.retrieve()):
+    #        if not silent:
+    #            print(f"=== {section_type} {num} ===")  # Prints the section type dynamically
+    #        if not silent and self.show_runes:
+    #            print(text)
+    #            print("-----")
+    #        if self.crypto.key:
+    #            plaintext = self.crypto.scheme(text,
+    #                                           key=self.crypto.key,
+    #                                           shift=self.crypto.shift,
+    #                                           lookup=self.crypto.lookup,
+    #                                           skips=self.crypto.skips,
+    #                                           excludes=self.crypto.excludes)
+    #            if not silent:
+    #                print(plaintext)
+    #            else:
+    #                plaintexts.append(plaintext)  # Adds the decrypted text to the list
+    #        else:
+    #            plaintext = self.crypto.scheme(text, lookup=self.crypto.lookup, shift=self.crypto.shift, skips=self.crypto.skips)
+    #            if not silent:
+    #                print(plaintext)
+    #            else:
+    #                plaintexts.append(plaintext)  # Adds the decrypted text to the list
+    #    if silent:
+    #        self.plaintext = plaintexts  # Stores decrypted texts for multiple sections
+
+
     def rate(self):
         """ Rate the fitness of this spec's outcome """
         self.run(silent=True)
@@ -153,6 +183,27 @@ class SolutionSpec(DNA):
         self.fitness["eng"] = next(obj.value for obj in confidence if obj.language == Language.ENGLISH)
         self.fitness["lat"] = next(obj.value for obj in confidence if obj.language == Language.LATIN)
         print("FITNESS:", self.fitness)
+
+    #def rate(self):
+    #    """ Rate the fitness of this spec's outcome """
+    #    self.run(silent=True)
+        # TODO: Sanitize plaintext
+        # Assuming you have a method sanitize_text() for sanitizing the plaintext
+    #    sanitized_text = sanitize_text(self.plaintext)
+        
+        # TODO: Store list of confidences for multiple sections
+    #    confidences = []
+    #    for section_text in sanitized_text:
+    #        confidence = DETECTOR.compute_language_confidence_values(section_text)
+    #        confidences.append({
+    #            "eng": next(obj.value for obj in confidence if obj.language == Language.ENGLISH),
+    #            "lat": next(obj.value for obj in confidence if obj.language == Language.LATIN)
+    #        })
+        
+        # TODO: Iterate over plaintext for multiple sections when implemented, see run()
+    #    print("FITNESS:", confidences)
+    #    return confidences
+
 
     def crossover(self, **entries):
         offspring = copy.deepcopy(self)
@@ -170,9 +221,13 @@ class SolutionSpec(DNA):
         # FIXME: use wordlist for keys/exchange lookups
         pass
 
-    # TODO: Use this implementation when FSM/rule engine are integrated, d4vi's is much better
+    # TODO: Use this implementation when FSM/rule engine are integrated, d4vi's is much better → I was thinking on something like this:
     #def crossover(self, **kwargs):
-    #    child = SolutionSpec()
+    #    child = SolutionSpec(
+    #        retrieval=self.retrieval,
+    #        crypto=self.crypto,
+    #        show_runes=self.show_runes
+    #    )
     #    for key in self.__dict__:
     #        if random.random() < 0.5:
     #            setattr(child, key, self.__dict__[key])
@@ -182,10 +237,12 @@ class SolutionSpec(DNA):
 
     #def mutate(self):
     #    mutation_rate = 0.1  # Adjust this mutation rate
+    #    offspring = copy.deepcopy(self)
     #    for key in self.__dict__:
     #        if random.random() < mutation_rate:
-    #            # Example of mutation: increment or decrement by a small random amount
-    #            setattr(self, key, self.__dict__[key] + random.uniform(-0.1, 0.1))
+    #             Example of mutation: increment or decrement by a small random amount
+    #            setattr(offspring, key, offspring.__dict__[key] + random.uniform(-0.1, 0.1))
+    #    return offspring
 
 def random_spec():
     raise NotImplementedError("random_spec not implemented")
