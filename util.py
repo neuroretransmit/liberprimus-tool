@@ -1,3 +1,17 @@
+import functools
+
+# For the following two functions see: https://stackoverflow.com/questions/31174295/getattr-and-setattr-on-nested-subobjects-chained-properties
+def rsetattr(obj, attr, val):
+    """ Recursive setattr for rule engine """
+    pre, _, post = attr.rpartition('.')
+    return setattr(rgetattr(obj, pre) if pre else obj, post, val)
+
+def rgetattr(obj, attr, *args):
+    """ Recursive getattr for rule engine """
+    def _getattr(obj, attr):
+        return getattr(obj, attr, *args)
+    return functools.reduce(_getattr, [obj] + attr.split('.'))
+
 # Use to get start/end of substrings within the Liber Primus for lexing
 def find(haystack, needle):
     """ Find the start of all (possibly-overlapping) instances of needle in haystack """

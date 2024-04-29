@@ -5,19 +5,31 @@ from the 2014 Cicada 3301 puzzle.
 
 ## Requirements
 
-* Python 3.9+
+* Python 3
+* virtualenv
 
 ## Running
 
-To decrypt pages with known solutions:
+```bash
+$ docker-compose up -d
+$ virtualenv venv
+$ source venv/bin/activate
+(venv) $ pip install -r requirements.txt
+(venv) $ ./main.py <args here>
+```
+
+### Genetic Algorithm
 
 ```bash
-$ ./main.py
+(venv) $ ./main.py --ga
 ```
 
-## Usage
+### Known Solutions
 
-```python
-from gematria import ATBASH, RUNE_LOOKUP, direct_translation, rot, vigenere
-# etc
+```bash
+(venv) $ ./main.py
 ```
+
+## Design
+
+See [DESIGN.md](./DESIGN.md)
