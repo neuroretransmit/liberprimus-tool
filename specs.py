@@ -1,6 +1,5 @@
 import copy
 import random
-from functools import reduce
 from lp import get_pages
 from crypto.gematria import RUNE_LOOKUP
 from crypto.vigenere import vigenere
@@ -159,7 +158,7 @@ class SolutionSpec(DNA):
             lat.append(next(obj.value for obj in confidence if obj.language == Language.LATIN))
         self.fitness["eng"] = reduce(lambda a, b: a+b, eng) / len(eng)
         self.fitness["lat"] = reduce(lambda a, b: a+b, lat) / len(lat)
-        print("FITNESS:", self.fitness) 
+        print("FITNESS:", self.fitness)
 
     def crossover(self, **entries):
         offspring = copy.deepcopy(self)
