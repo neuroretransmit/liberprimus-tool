@@ -15,14 +15,10 @@ To decrypt pages with known solutions:
 ```bash
 $ virtualenv venv
 $ source venv/bin/activate
-$ pip install -r requirements.txt
-(venv) $ 
-(venv) $ ./main.py
+(venv) $ pip install -r requirements.txt
+(venv) $ ./main.py <args here>
 ```
 
-## Usage
+## Design
 
-```python
-from gematria import ATBASH, RUNE_LOOKUP, direct_translation, rot, vigenere
-# etc
-```
+See [DESIGN.md](./DESIGN.md)
