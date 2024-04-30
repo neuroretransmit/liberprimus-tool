@@ -28,14 +28,15 @@ class GeneticAlgorithm:
             skips = json.dumps(offspring.crypto.skips) if offspring.crypto.skips is not None else None
             excludes = json.dumps(offspring.crypto.excludes) if offspring.crypto.excludes is not None else None
             # Check if solution has been attempted before
-            if solution_exists(scheme_name, offspring.crypto.key, offspring.crypto.shift, skips, excludes):
+            section_name = getattr(offspring.retrieval.mode, '__name__', 'Unknown')
+            if solution_exists(section_name[4:], offspring.retrieval.nums, scheme_name, offspring.crypto.key, offspring.crypto.shift, skips, excludes):
                 continue
             # Run the spec and grab fitness
             offspring.rate()
             # Add solution to database
             max_confidence = max([v for k, v in offspring.fitness.items()])
             max_confidence_lang = next(k for k, v in offspring.fitness.items() if v == max_confidence)
-            insert_solution_attempt(scheme_name, offspring.crypto.key, offspring.crypto.shift, max_confidence, max_confidence_lang, skips, excludes)
+            insert_solution_attempt(section_name[4:], offspring.retrieval.nums, scheme_name, offspring.crypto.key, offspring.crypto.shift, max_confidence, max_confidence_lang, skips, excludes)
             # Pop the worst individual out of the genepool in-place
             self.pool.pop()
             # Add new offspring

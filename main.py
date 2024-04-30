@@ -51,7 +51,8 @@ SOLUTIONS = {
 }
 
 def ga():
-    ga = GeneticAlgorithm(1, initial_pool=[SOLUTIONS[0], SOLUTIONS[1]])
+    # Run infinitely by going over 1
+    ga = GeneticAlgorithm(1.1, initial_pool=[SOLUTIONS[0], SOLUTIONS[1]])
     ga.evolve()
 
 def known():

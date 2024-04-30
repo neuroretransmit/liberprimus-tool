@@ -1,5 +1,6 @@
 import copy
 import random
+from functools import reduce
 from lp import get_pages, get_segments, get_paragraphs, get_lines, get_clauses
 from rules.fsm import FSM
 from crypto.gematria import RUNE_LOOKUP
