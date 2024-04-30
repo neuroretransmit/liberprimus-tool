@@ -1,15 +1,19 @@
 import copy
 import random
-from lp import get_pages, get_segments
+from lp import get_pages, get_segments, get_paragraphs, get_lines, get_clauses
 from rules.fsm import FSM
 from crypto.gematria import RUNE_LOOKUP
 from crypto.vigenere import vigenere
 from crypto.atbash import ATBASH
+from args import get_transcription_validations
 from abc import ABC, abstractmethod
 from lingua import Language, LanguageDetectorBuilder
 
 LANGUAGES = [Language.ENGLISH, Language.LATIN]
 DETECTOR = LanguageDetectorBuilder.from_languages(*LANGUAGES).build()
+
+# TODO: Make use of in state transitions when mode is changed for retrieval
+transcription_validations = get_transcription_validations()
 
 state_transitions = {
     "crypto": {
@@ -35,6 +39,7 @@ state_transitions = {
                 "key": lambda: random.choice(["DIUINITY", "WELCOMEPILGRIM", "FIRFUMFERENCE"]),
                 "excludes": {'a': lambda: random.randint(0, 10), 'b': lambda: random.randint(0, 10)},
                 "skips": {},
+                # TODO: Needs to be modified out of dict to lookup the key in use
                 "key_index": lambda: random.randint(0, len("MUTATED") - 1)
             },
             # * denotes common attributes referenced in all
@@ -45,8 +50,9 @@ state_transitions = {
         }
     },
     "retrieval": {
-        "mode": lambda: random.choice([get_pages, get_segments]),
+        "mode": lambda: random.choice([get_pages, get_segments, get_paragraphs, get_lines, get_clauses]),
         # TODO: nums - using tooling in argument validations to pull valid ranges
+        "nums": [0]
     }
 }
 
