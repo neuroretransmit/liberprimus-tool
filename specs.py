@@ -1,13 +1,13 @@
 import copy
 import random
 from functools import reduce
+from ga.dna import DNA
 from lp import get_pages, get_segments, get_paragraphs, get_lines, get_clauses
 from rules.fsm import FSM
 from crypto.gematria import RUNE_LOOKUP
 from crypto.vigenere import vigenere
 from crypto.atbash import ATBASH
 from args import get_transcription_validations
-from abc import ABC, abstractmethod
 from lingua import Language, LanguageDetectorBuilder
 
 LANGUAGES = [Language.ENGLISH, Language.LATIN]
@@ -57,18 +57,6 @@ state_transitions = {
     }
 }
 
-class DNA(ABC):
-    crossover_rate = 0.1
-    mutation_rate = .05
-
-    @abstractmethod
-    def crossover(self, *args, **kwargs):
-        pass
-
-    @abstractmethod
-    def mutate(self):
-        pass
-
 class TextRetrievalSpec(DNA):
     def __init__(self, nums: list, mode=get_pages):
         """ The specification for how to retrieve text from Liber Primus
@@ -99,6 +87,10 @@ class TextRetrievalSpec(DNA):
 
     def mutate(self):
         pass
+
+    @staticmethod
+    def random():
+        raise NotImplementedError("random not implemented")
 
 class CryptoSpec(DNA):
     def __init__(self, scheme, key=None, shift=0, lookup=RUNE_LOOKUP, skips=None, excludes=None):
@@ -149,6 +141,10 @@ class CryptoSpec(DNA):
 
     def mutate(self):
         pass
+
+    @staticmethod
+    def random():
+        raise NotImplementedError("random not implemented")
 
 class SolutionSpec(DNA):
     def __init__(self, retrieval: TextRetrievalSpec, crypto: CryptoSpec, show_runes: bool = False):
@@ -228,26 +224,7 @@ class SolutionSpec(DNA):
         self.fsm.transition(self.mutation_rate)
         self.__dict__.update(self.fsm.current_state.__dict__)
 
+    @staticmethod
+    def random():
+        raise NotImplementedError("random not implemented")
 
-    # TODO: Use this implementation when FSM/rule engine are integrated, d4vi's is much better
-    #def crossover(self, **kwargs):
-    #    child = SolutionSpec()
-    #    for key in self.__dict__:
-    #        if random.random() < 0.5:
-    #            setattr(child, key, self.__dict__[key])
-    #        else:
-    #            setattr(child, key, kwargs[key])
-    #    return child
-
-    #def mutate(self):
-    #    mutation_rate = 0.1  # Adjust this mutation rate
-    #    for key in self.__dict__:
-    #        if random.random() < mutation_rate:
-    #            # Example of mutation: increment or decrement by a small random amount
-    #            setattr(self, key, self.__dict__[key] + random.uniform(-0.1, 0.1))
-
-def random_spec():
-    raise NotImplementedError("random_spec not implemented")
-
-def random_specs():
-    raise NotImplementedError("random spec not implemented")

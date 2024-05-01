@@ -1,7 +1,8 @@
 import json
-from specs import random_specs
+from specs import SolutionSpec
 from random import getrandbits
 from db.db import insert_solution_attempt, solution_exists
+from ga.dna import DNA
 
 class GeneticAlgorithm:
     def __init__(self, target: float, initial_pool:list = []):
@@ -9,7 +10,7 @@ class GeneticAlgorithm:
         if initial_pool != []:
             self.pool = initial_pool
         else:
-            self.pool = random_specs()
+            self.pool = [SolutionSpec.random() for _ in range(2)]
 
     def evolve(self):
         while True:
