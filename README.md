@@ -18,6 +18,24 @@ $ source venv/bin/activate
 (venv) $ ./main.py <args here>
 ```
 
+```
+usage: main.py [-h] [--pages PAGES [PAGES ...]] [--lines LINES [LINES ...]] [--segments SEGMENTS [SEGMENTS ...]] [--paragraphs PARAGRAPHS [PARAGRAPHS ...]]
+               [--clauses CLAUSES [CLAUSES ...]] [--words WORDS [WORDS ...]] [--runes | --no-runes] [--ga | --no-ga]
+
+Options for Liber Primus Tool
+
+options:
+  -h, --help            show this help message and exit
+  --pages PAGES [PAGES ...]
+  --lines LINES [LINES ...]
+  --segments SEGMENTS [SEGMENTS ...]
+  --paragraphs PARAGRAPHS [PARAGRAPHS ...]
+  --clauses CLAUSES [CLAUSES ...]
+  --words WORDS [WORDS ...]
+  --runes, --no-runes
+  --ga, --no-ga
+```
+
 ### Genetic Algorithm
 
 ```bash
