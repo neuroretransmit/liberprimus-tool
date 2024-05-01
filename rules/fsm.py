@@ -73,7 +73,7 @@ class FSM:
                                 v = validations["segments"]["num"]
                             else:
                                 raise NotImplementedError(f"found retrieval.mode callable that is not in FSM: {name}")
-                            transitions.append(('.'.join([top_rule_k, second_rule_k]), random.randrange(0, v)))
+                            transitions.append(('.'.join([top_rule_k, second_rule_k]), [random.randint(0, v)]))
                         else:
                             transitions.append(('.'.join([top_rule_k, second_rule_k]), second_rule_v))
 

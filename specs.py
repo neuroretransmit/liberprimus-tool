@@ -1,5 +1,6 @@
 import copy
 import random
+from functools import reduce
 from lp import get_pages, get_segments, get_paragraphs, get_lines, get_clauses
 from rules.fsm import FSM
 from crypto.gematria import RUNE_LOOKUP
@@ -168,7 +169,9 @@ class SolutionSpec(DNA):
         for num, text in zip(self.retrieval.nums, self.retrieval.retrieve()):
             if not silent:
                 # FIXME: This shouldn't always show PAGE, we can retrieve segments, etc.
-                print(f"=== PAGE {num} ===")
+                name = getattr(self.retrieval.mode, '__name__', 'Unknown')
+                name = name[:-1].replace("get_", "").upper()
+                print(f"=== {name} {num} ===")
             if not silent and self.show_runes:
                 print(text)
                 print("-----")
