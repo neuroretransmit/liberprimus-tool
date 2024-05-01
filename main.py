@@ -61,53 +61,43 @@ def ga():
 
 def known(page=None):
     """ Decrypt known pages """
-    if page is None:  # Quando nenhum argumento --pages for passado
+    if page is None:
         for v in SOLUTIONS.values():
             v.run()
-    else:  # Quando o argumento --pages for passado
-        # A parte original do known() vai aqui
+    else:
         if page in KNOWN_PAGES:
             if page == 12 or page == 13:
                 SOLUTIONS[12].run()
             else:
                 SOLUTIONS[page].run()
 
-def translate_page(text, page):
-    """Traduz a página de acordo com o mapeamento de página"""
-    if page in KNOWN_PAGES:
-        known(page)
-    else:
-        print("Translation not available for this page.")
-
-
-# mapping pages for the correspondent traduce functions
-PAGE_TRANSLATIONS = {
-    0: direct_translation,
-    1: vigenere,
-    3: direct_translation,
-    4: rot,
-    5: rot,
-    6: rot,
-    7: rot,
-    9: direct_translation,
-    10: direct_translation,
-    11: direct_translation,
-    12: vigenere,
-    14: direct_translation,
-    71: running_shift,
-    72: direct_translation,
-}
-
-
 def attempt_target():
-    """ Tentativa de decifrar partes especificadas do Liber Primus """
+    """ Attempt to decipher specified parts of the Liber Primus """
     if "pages" in target:
-        page_texts = get_pages(target["pages"])
-        for page, text in zip(target["pages"], page_texts):
-            if "runes" in target and target["runes"]:
-                print(text)
-            else:
-                translate_page(text, page)
+        pages_to_translate = target["pages"]
+        if pages_to_translate:
+            for page in pages_to_translate:
+                if page in range(0, 73):
+                    if "runes" in target and target["runes"]:
+                        print(f"=== PAGE {page} ===")
+                        print(get_pages([page])[0])
+                    else:
+                        if page in KNOWN_PAGES:
+                            known(page)
+                        else:
+                            print("Translation not available for this page.")
+                else:
+                    print(f"Invalid page number: {page}")
+        else:
+            print("No page specified.")
+    elif "runes" in target and target["runes"]:
+        for page in range(0, 73):
+            print(f"=== PAGE {page} ===")
+            print(get_pages([page])[0])
+    else:
+        print("No page specified.")
+
+"""
     if "segments" in target:
         pass
     if "paragraphs" in target:
@@ -118,11 +108,7 @@ def attempt_target():
         pass
     if "clause" in target:
         pass
-    else:
-        if not target:
-            for page in PAGE_TRANSLATIONS:
-                known(page)
-
+"""
 
 if __name__ == "__main__":
     target = parse_args()
