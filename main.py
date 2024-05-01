@@ -11,7 +11,7 @@ from crypto.vigenere import vigenere
 from crypto.running_shift import running_shift
 from crypto.math import totients
 from specs import SolutionSpec, CryptoSpec, TextRetrievalSpec
-from ga import GeneticAlgorithm
+from ga.ga import GeneticAlgorithm
 
 SOLUTIONS = {
     0 : SolutionSpec(TextRetrievalSpec([0]), CryptoSpec(atbash, lookup=ATBASH)),
