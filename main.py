@@ -71,26 +71,6 @@ def known(page=None):
             else:
                 SOLUTIONS[page].run()
 
-
-# mapping pages for the correspondent traduce functions
-PAGE_TRANSLATIONS = {
-    0: direct_translation,
-    1: vigenere,
-    3: direct_translation,
-    4: rot,
-    5: rot,
-    6: rot,
-    7: rot,
-    9: direct_translation,
-    10: direct_translation,
-    11: direct_translation,
-    12: vigenere,
-    14: direct_translation,
-    71: running_shift,
-    72: direct_translation,
-}
-
-
 def attempt_target():
     """ Attempt to decipher specified parts of the Liber Primus """
     if "pages" in target:
@@ -129,7 +109,6 @@ def attempt_target():
     if "clause" in target:
         pass
 """
-
 
 if __name__ == "__main__":
     target = parse_args()
