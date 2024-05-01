@@ -7,16 +7,21 @@ from the 2014 Cicada 3301 puzzle.
 
 * Python 3
 * virtualenv
+* Docker/docker-compose
+* PostgreSQL development libraries (for psycopg2)
 
 ## Running
+
+### Setup
 
 ```bash
 $ docker-compose up -d
 $ virtualenv venv
 $ source venv/bin/activate
 (venv) $ pip install -r requirements.txt
-(venv) $ ./main.py <args here>
 ```
+
+### Usage
 
 ```
 usage: main.py [-h] [--pages PAGES [PAGES ...]] [--lines LINES [LINES ...]] [--segments SEGMENTS [SEGMENTS ...]] [--paragraphs PARAGRAPHS [PARAGRAPHS ...]]
@@ -50,4 +55,8 @@ options:
 
 ## Design
 
-See [DESIGN.md](./DESIGN.md)
+See [doc/DESIGN.md](./doc/DESIGN.md)
+
+## Diagrams
+
+See [doc/DIAGRAMS.md](./doc/DIAGRAMS.md)

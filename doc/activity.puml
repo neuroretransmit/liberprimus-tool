@@ -1,0 +1,22 @@
+@startuml
+start
+label ga_loop
+:Sort gene pool;
+:Select most fit;
+if (Fitness at target) then (yes)
+  stop
+endif
+:Crossover for new offspring;
+if (Random value less than crossover rate) then (yes)
+  :Swap chromosome from parent;
+endif
+:Mutate offspring;
+if (Random value less than mutation rate) then (yes)
+  :Mutate chromosome using finite state machine;
+endif
+:Execute offspring specification/rate fitness;
+:Store offspring/result in database;
+:Put offspring back in gene pool;
+goto ga_loop
+@enduml
+
