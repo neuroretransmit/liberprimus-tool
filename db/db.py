@@ -42,7 +42,6 @@ def insert_solution_attempt(section, nums, scheme, key, shift, max_confidence, m
         print(error)
     conn.close()
 
-
 def solution_exists(section, nums, scheme, key, shift, skips, excludes):
     conn = connect(load_config())
     cursor = conn.cursor()
