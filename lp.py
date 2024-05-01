@@ -37,3 +37,12 @@ def get_pages(nums):
 
 def get_segments(nums):
     return get_entities(nums, '$')
+
+def get_paragraphs(nums):
+    return get_entities(nums, '&')
+
+def get_lines(nums):
+    return get_entities(nums, '/')
+
+def get_clauses(nums):
+    return get_entities(nums, '.')
