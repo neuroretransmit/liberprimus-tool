@@ -21,6 +21,14 @@ $ source venv/bin/activate
 (venv) $ pip install -r requirements.txt
 ```
 
+### Testing
+
+```bash
+$ virtualenv venv # if not already created
+$ source venv/bin/activate
+(venv) $ ./test.sh
+
+```
 ### Usage
 
 ```
