@@ -19,7 +19,6 @@ class GeneticAlgorithm:
             self.pool.sort(key=lambda i: max([v for k, v in i.fitness.items()]), reverse=True)
             # select two fittest
             parents = self.pool[:2]
-            print(f"BEST: {self.pool[0].fitness}")
             if max([v for k, v in parents[0].fitness.items()]) >= self.target:
                 break
             # TODO: finish crossover
