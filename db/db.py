@@ -66,9 +66,10 @@ class SolutionAttemptsDAO:
         if excludes is None:
             sql += " AND excludes = %s"
         else:
-            sql += ' AND excludes %> %s'
+            sql += ' AND excludes @> %s'
         sql += ';'
         cursor.execute(sql, (section, nums, scheme, key, shift, skips if skips else 'null', excludes if excludes else 'null'))
+
         # The UNIQUE constraint is specified by all these columns so no need for fetchall
         data = cursor.fetchone()
         if data is not None:
