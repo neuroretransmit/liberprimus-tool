@@ -1,7 +1,7 @@
 from crypto.gematria import RUNE_LOOKUP, PLAINTEXT
 
 
-def running_shift(
+def running_key(
     text, key=None, key_index=0, fast=True, lookup=RUNE_LOOKUP, skips=None, excludes=None, shift=0
 ):
     plaintext = ""
