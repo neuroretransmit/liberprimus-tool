@@ -24,46 +24,50 @@ state_transitions = {
     "crypto": {
         # We can define all rule transitions for crypto based on scheme
         "scheme": {
-            "vigenere": {
-                "$includes": ["$keyed", "*"]
-            },
+            "vigenere": {"$includes": ["$keyed", "*"]},
             "running_shift": {
                 "$includes": ["$keyed", "*"],
                 "$excludes": ["$keyed.key"],
-                "key": lambda: [random.sample(range(-29, 29), random.randint(0, 10))]
+                "key": lambda: [random.sample(range(-29, 29), random.randint(0, 10))],
             },
-            "atbash": {
-                "$includes": ["*"]
-            },
-            "rot": {
-                "$includes": ["*"]
-            },
+            "atbash": {"$includes": ["*"]},
+            "rot": {"$includes": ["*"]},
             # Attrs prepended with $ should be referenced by their appropriate types
             "$keyed": {
                 # TODO: Will pick from wordlist in future
-                "key": lambda: random.choice(["DIUINITY", "WELCOMEPILGRIM", "FIRFUMFERENCE"]),
-                "excludes": {'a': lambda: random.randint(0, 10), 'b': lambda: random.randint(0, 10)},
+                "key": lambda: random.choice(
+                    ["DIUINITY", "WELCOMEPILGRIM", "FIRFUMFERENCE"]
+                ),
+                "excludes": {
+                    "a": lambda: random.randint(0, 10),
+                    "b": lambda: random.randint(0, 10),
+                },
                 "skips": {},
                 # TODO: Needs to be modified out of dict to lookup the key in use
-                "key_index": lambda: random.randint(0, len("MUTATED") - 1)
+                "key_index": lambda: random.randint(0, len("MUTATED") - 1),
             },
             # * denotes common attributes referenced in all
             "*": {
-                "lookup": lambda: random.choice([ATBASH, RUNE_LOOKUP]), # Should probably create random lookups too
-                "shift": lambda: random.randint(-29, 29)
-            }
+                "lookup": lambda: random.choice(
+                    [ATBASH, RUNE_LOOKUP]
+                ),  # Should probably create random lookups too
+                "shift": lambda: random.randint(-29, 29),
+            },
         }
     },
     "retrieval": {
-        "mode": lambda: random.choice([get_pages, get_segments, get_paragraphs, get_lines, get_clauses]),
+        "mode": lambda: random.choice(
+            [get_pages, get_segments, get_paragraphs, get_lines, get_clauses]
+        ),
         # TODO: nums - using tooling in argument validations to pull valid ranges
-        "nums": [0]
-    }
+        "nums": [0],
+    },
 }
+
 
 class TextRetrievalSpec(DNA):
     def __init__(self, nums: list, mode=get_pages):
-        """ The specification for how to retrieve text from Liber Primus
+        """The specification for how to retrieve text from Liber Primus
         @param num  the number of the part (page, segment, line, etc.)
         @param mode a function reference to the retrieval method
         """
@@ -93,9 +97,19 @@ class TextRetrievalSpec(DNA):
     def random():
         raise NotImplementedError("random not implemented")
 
+
 class CryptoSpec(DNA):
-    def __init__(self, scheme, key=None, key_index=0, shift=0, lookup=RUNE_LOOKUP, skips=None, excludes=None):
-        """ The specification for the cryptography to be performed
+    def __init__(
+        self,
+        scheme,
+        key=None,
+        key_index=0,
+        shift=0,
+        lookup=RUNE_LOOKUP,
+        skips=None,
+        excludes=None,
+    ):
+        """The specification for the cryptography to be performed
         @param scheme   The encryption scheme to use
         @param key      The key for the cipher
         @param shift    The shift value for lookups
@@ -124,7 +138,11 @@ class CryptoSpec(DNA):
                 print("crossing over crypto.scheme")
                 setattr(offspring, attr, v)
             # TODO: Extract keyable schemes to variable that can be easily referenced
-            elif attr == "scheme" and v in [vigenere] and random.random() < self.crossover_rate:
+            elif (
+                attr == "scheme"
+                and v in [vigenere]
+                and random.random() < self.crossover_rate
+            ):
                 if attr == "key" and v and random.random() < self.crossover_rate:
                     print("crossing over crypto.key")
                     setattr(offspring, attr, v)
@@ -149,25 +167,25 @@ class CryptoSpec(DNA):
     def random():
         raise NotImplementedError("random not implemented")
 
+
 class SolutionSpec(DNA):
-    def __init__(self, retrieval: TextRetrievalSpec, crypto: CryptoSpec, show_runes: bool = False):
+    def __init__(
+        self, retrieval: TextRetrievalSpec, crypto: CryptoSpec, show_runes: bool = False
+    ):
         self.retrieval = retrieval
         self.crypto = crypto
         self.show_runes = show_runes
         # Used by ga.py (Genetic Algorithm)
         self.plaintext = None
-        self.fitness = {
-            "eng": 0,
-            "lat": 0
-        }
+        self.fitness = {"eng": 0, "lat": 0}
         self.fsm = FSM(states=state_transitions)
 
     def run(self, silent=False):
-        """ Generic cradle to run decryptions """
+        """Generic cradle to run decryptions"""
         plaintexts = []
         for num, text in zip(self.retrieval.nums, self.retrieval.retrieve()):
             if not silent:
-                name = getattr(self.retrieval.mode, '__name__', 'Unknown')
+                name = getattr(self.retrieval.mode, "__name__", "Unknown")
                 # Trim the trailing 's' and prepended get_ from name
                 name = name[:-1].replace("get_", "").upper()
                 print(f"=== {name} {num} ===")
@@ -175,20 +193,27 @@ class SolutionSpec(DNA):
                 print(text)
                 print("-----")
             if self.crypto.key:
-                plaintext = self.crypto.scheme(text,
-                                               key=self.crypto.key,
-                                               # TODO: Make use of this in keyed algorithms
-                                               key_index =self.crypto.key_index,
-                                               shift=self.crypto.shift,
-                                               lookup=self.crypto.lookup,
-                                               skips=self.crypto.skips,
-                                               excludes=self.crypto.excludes)
+                plaintext = self.crypto.scheme(
+                    text,
+                    key=self.crypto.key,
+                    # TODO: Make use of this in keyed algorithms
+                    key_index=self.crypto.key_index,
+                    shift=self.crypto.shift,
+                    lookup=self.crypto.lookup,
+                    skips=self.crypto.skips,
+                    excludes=self.crypto.excludes,
+                )
                 if not silent:
                     print(plaintext)
                 else:
                     plaintexts.append(plaintext)
             else:
-                plaintext = self.crypto.scheme(text, lookup=self.crypto.lookup, shift=self.crypto.shift, skips=self.crypto.skips)
+                plaintext = self.crypto.scheme(
+                    text,
+                    lookup=self.crypto.lookup,
+                    shift=self.crypto.shift,
+                    skips=self.crypto.skips,
+                )
                 if not silent:
                     print(plaintext)
                 else:
@@ -197,19 +222,28 @@ class SolutionSpec(DNA):
             self.plaintext = plaintexts
 
     def rate(self):
-        """ Rate the fitness of this spec's outcome """
+        """Rate the fitness of this spec's outcome"""
         self.run(silent=True)
         # TODO: Sanitize plaintext
         # TODO: Store list of confidences for multiple sections
         # TODO: Iterate overplaintext for multiple sections when implemented, see run()
-        confidences = [DETECTOR.compute_language_confidence_values(plaintext) for plaintext in self.plaintext]
+        confidences = [
+            DETECTOR.compute_language_confidence_values(plaintext)
+            for plaintext in self.plaintext
+        ]
         eng = []
         lat = []
         for confidence in confidences:
-            eng.append(next(obj.value for obj in confidence if obj.language == Language.ENGLISH))
-            lat.append(next(obj.value for obj in confidence if obj.language == Language.LATIN))
-        self.fitness["eng"] = reduce(lambda a, b: a+b, eng) / len(eng)
-        self.fitness["lat"] = reduce(lambda a, b: a+b, lat) / len(lat)
+            eng.append(
+                next(
+                    obj.value for obj in confidence if obj.language == Language.ENGLISH
+                )
+            )
+            lat.append(
+                next(obj.value for obj in confidence if obj.language == Language.LATIN)
+            )
+        self.fitness["eng"] = reduce(lambda a, b: a + b, eng) / len(eng)
+        self.fitness["lat"] = reduce(lambda a, b: a + b, lat) / len(lat)
         print("FITNESS:", self.fitness)
 
     def crossover(self, **entries):
@@ -229,4 +263,3 @@ class SolutionSpec(DNA):
     @staticmethod
     def random():
         raise NotImplementedError("random not implemented")
-

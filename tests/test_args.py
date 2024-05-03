@@ -11,8 +11,9 @@ EXPECTED_SECTION_COUNTS = {
     "paragraphs": 33,
     "segments": 18,
     "lines": 797,
-    "pages": 73
+    "pages": 73,
 }
+
 
 class TestArgs(unittest.TestCase):
     def test_get_transcription_validations(self):
@@ -20,5 +21,6 @@ class TestArgs(unittest.TestCase):
         for k, v in EXPECTED_SECTION_COUNTS.items():
             self.assertEqual(validations[k]["num"], v)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()
