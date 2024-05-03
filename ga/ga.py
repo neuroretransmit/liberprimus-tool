@@ -43,6 +43,7 @@ class GeneticAlgorithm:
             )
             # Check if solution has been attempted before
             section_name = getattr(offspring.retrieval.mode, "__name__", "Unknown")
+            print("-----")
             if self.dao.solution_exists(
                 section_name[4:],
                 offspring.retrieval.nums,

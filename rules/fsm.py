@@ -1,4 +1,5 @@
 import random
+from lp import get_pages, get_paragraphs, get_clauses, get_lines, get_segments
 from util import rsetattr, rgetattr
 from args import get_transcription_validations
 from pprint import pp
@@ -29,8 +30,8 @@ class FSM:
                 top_attr = getattr(self.current_state, top_rule_k)
                 # Second-level {attrs of crypto, retrieval}
                 for second_rule_k, second_rule_v in self.states[top_rule_k].items():
-                    # TODO: Scheme doesn't appear to mutate - fix this
                     # TODO continued: Calling random.getrandbits() will intermittently skip scheme to change the scheme
+                    # TODO: Scheme doesn't appear to mutate - fix this
                     # FIXME for TODO continued: with above getrandbits(): need to setup parameters when this happens
                     if (
                         second_rule_k == "scheme"
@@ -73,9 +74,31 @@ class FSM:
                                         (".".join([top_rule_k, second_rule_k, k]), v)
                                     )
                     else:
-                        # FIXME: Need to setup retrieval.num
-                        if top_rule_k == "retrieval" and second_rule_k == "nums":
-                            mode_callable = getattr(top_attr, "mode")
+                        new_mode = None
+                        # For a mutated mode, nums also needs to be mutated
+                        if top_rule_k == "retrieve" and second_rule_k == "mode":
+                            new_mode = random.choice(
+                                [
+                                    get_segments,
+                                    get_pages,
+                                    get_clauses,
+                                    get_lines,
+                                    get_paragraphs,
+                                ]
+                            )
+                            transitions.append(
+                                (".".join([top_rule_k, second_rule_k]), new_mode)
+                            )
+                        if top_rule_k == "retrieve" and second_rule_k in [
+                            "nums",
+                            "mode",
+                        ]:
+                            # FIXME: Need to setup retrieval.num
+                            mode_callable = (
+                                getattr(top_attr, "mode")
+                                if second_rule_k != "mode"
+                                else new_mode
+                            )
                             name = getattr(mode_callable, "__name__", "Unknown")
                             pp(validations)
                             if "pages" in name:
@@ -94,13 +117,18 @@ class FSM:
                                 raise NotImplementedError(
                                     f"found retrieval.mode callable that is not in FSM: {name}"
                                 )
+                            second_rule_modified = (
+                                second_rule_k
+                                if second_rule_k != "mode"
+                                else "retrie.nums"
+                            )
                             transitions.append(
                                 (
-                                    ".".join([top_rule_k, second_rule_k]),
+                                    ".".join([top_rule_k, second_rule_modified]),
                                     [random.randint(0, v)],
                                 )
                             )
-                        else:
+                        elif second_rule_k != "mode":
                             transitions.append(
                                 (".".join([top_rule_k, second_rule_k]), second_rule_v)
                             )
@@ -113,18 +141,17 @@ class FSM:
                 before = rgetattr(self.current_state, k)
                 if callable(before):
                     before = getattr(before, "__name__", "Unknown")
+                value = None
+                if callable(v) and k != "retrieval.mode":
+                    value = v()
+                elif not isinstance(v, dict):
+                    value = v
+                elif k == "retrieval.mode":
+                    value = v(transitions["retrieval.mode"])
+                else:
+                    value = {k1: v1() for k1, v1 in v.items()}
                 rsetattr(
-                    self.current_state,
-                    k,
-                    (
-                        v()
-                        if callable(v)  # Call lambda/callable
-                        else (
-                            v
-                            if not isinstance(v, dict)  # Non-dict value
-                            else {k1: v1() for k1, v1 in v.items()}
-                        )
-                    ),
+                    self.current_state, k, value
                 )  # Call lambda/callable dict value
                 after = rgetattr(self.current_state, k)
                 if callable(after):
