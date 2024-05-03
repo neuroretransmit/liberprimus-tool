@@ -76,13 +76,10 @@ class TextRetrievalSpec(DNA):
         for attr, v in entries.items():
             if attr == "mode" and random.random() < self.crossover_rate:
                 print("crossing over retrieval.mode")
-                pass
+                setattr(offspring, attr, v)
             elif attr == "nums" and random.random() < self.crossover_rate:
                 print("crossing over retrieval.nums")
-                pass
-            else:
-                continue
-        offspring.__dict__.update(text_retrieval_dict)
+                setattr(offspring, attr, v)
         return offspring
 
     def mutate(self):
@@ -115,28 +112,28 @@ class CryptoSpec(DNA):
     def crossover(self, **entries):
         offspring = copy.deepcopy(self)
         crypto_dict = self.__dict__
+        # TODO: Finish crossing over scheme
         for attr, v in entries.items():
             if attr == "scheme" and random.random() < self.crossover_rate:
                 print("crossing over crypto.scheme")
-                pass
+                setattr(offspring, attr, v)
             # TODO: Extract keyable schemes to variable that can be easily referenced
             elif attr == "scheme" and v in [vigenere] and random.random() < self.crossover_rate:
                 if attr == "key" and v and random.random() < self.crossover_rate:
                     print("crossing over crypto.key")
-                    pass
+                    setattr(offspring, attr, v)
                 elif attr == "skips" and random.random() < self.crossover_rate:
                     print("crossing over crypto.skips")
-                    pass
+                    setattr(offspring, attr, v)
                 elif attr == "excludes" and random.random() < self.crossover_rate:
                     print("crossing over crypto.excludes")
-                    pass
+                    setattr(offspring, attr, v)
             elif attr == "shift" and random.random() < self.crossover_rate:
                 print("crossing over crypto.shift")
-                pass
+                setattr(offspring, attr, v)
             elif attr == "lookup" and random.random() < self.crossover_rate:
                 print("crossing over crypto.lookup")
-                pass
-        offspring.__dict__.update(crypto_dict)
+                setattr(offspring, attr, v)
         return offspring
 
     def mutate(self):
@@ -164,8 +161,8 @@ class SolutionSpec(DNA):
         plaintexts = []
         for num, text in zip(self.retrieval.nums, self.retrieval.retrieve()):
             if not silent:
-                # FIXME: This shouldn't always show PAGE, we can retrieve segments, etc.
                 name = getattr(self.retrieval.mode, '__name__', 'Unknown')
+                # Trim the trailing 's' and prepended get_ from name
                 name = name[:-1].replace("get_", "").upper()
                 print(f"=== {name} {num} ===")
             if not silent and self.show_runes:
@@ -214,9 +211,6 @@ class SolutionSpec(DNA):
             if attr in {"crypto", "retrieval"}:
                 v.crossover(**entries[attr].__dict__)
                 setattr(offspring, attr, v)
-            else:
-                continue
-        #offspring.__dict__.update(solution_dict)
         return offspring
 
     def mutate(self):
