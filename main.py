@@ -8,7 +8,7 @@ from crypto.gematria import direct_translation, RUNE_LOOKUP
 from crypto.atbash import atbash, ATBASH
 from crypto.rot import rot
 from crypto.vigenere import vigenere
-from crypto.running_shift import running_shift
+from crypto.running_key import running_key
 from crypto.math import totients
 from specs import SolutionSpec, CryptoSpec, TextRetrievalSpec
 from ga.ga import GeneticAlgorithm
@@ -56,7 +56,7 @@ SOLUTIONS = {
     # TODO: 15-70
     71: SolutionSpec(
         TextRetrievalSpec([71]),
-        CryptoSpec(running_shift, key=totients(get_pages([71])[0]), skips={"ᚠ": [4]}),
+        CryptoSpec(running_key, key=totients(get_pages([71])[0]), skips={"ᚠ": [4]}),
     ),
     72: SolutionSpec(TextRetrievalSpec([72]), CryptoSpec(direct_translation)),
 }
@@ -86,6 +86,7 @@ def known(page=None):
 
 
 def attempt_target():
+    # TODO: Implement more than pages
     """Attempt to decipher specified parts of the Liber Primus"""
     if "pages" in target:
         pages_to_translate = target["pages"]
@@ -99,6 +100,7 @@ def attempt_target():
                         if page in KNOWN_PAGES:
                             known(page)
                         else:
+                            print(f"=== PAGE {page} ===")
                             print("Translation not available for this page.")
                 else:
                     print(f"Invalid page number: {page}")

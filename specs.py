@@ -25,7 +25,7 @@ state_transitions = {
         # We can define all rule transitions for crypto based on scheme
         "scheme": {
             "vigenere": {"$includes": ["$keyed", "*"]},
-            "running_shift": {
+            "running_key": {
                 "$includes": ["$keyed", "*"],
                 "$excludes": ["$keyed.key"],
                 "key": lambda: [random.sample(range(-29, 29), random.randint(0, 10))],
