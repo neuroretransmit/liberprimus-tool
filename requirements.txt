@@ -1,2 +1,14 @@
+autopep8==2.1.0
+black==24.4.2
+click==8.1.7
+importlib_metadata==7.1.0
 lingua-language-detector==2.0.2
+mypy-extensions==1.0.0
+packaging==24.0
+pathspec==0.12.1
+platformdirs==4.2.1
 psycopg2==2.9.9
+pycodestyle==2.11.1
+tomli==2.0.1
+yapf==0.40.2
+zipp==3.18.1

@@ -55,7 +55,7 @@ state_transitions = {
             },
         }
     },
-    "retrieval": {
+    "retrie": {
         "mode": lambda: random.choice(
             [get_pages, get_segments, get_paragraphs, get_lines, get_clauses]
         ),
