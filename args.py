@@ -108,7 +108,7 @@ def parse_args():
             and len(segments - set(range(0, validations["segments"]["num"]))) > 0
         ):
             raise ValueError(
-                f"Lines must be in range of 0-{validations['segments']['num']}"
+                f"Segments must be in range of 0-{validations['segments']['num']}"
             )
         target["segments"] = segments
     if args.paragraphs:
