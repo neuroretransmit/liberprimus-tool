@@ -16,6 +16,10 @@ DETECTOR = LanguageDetectorBuilder.from_languages(*LANGUAGES).build()
 # TODO: Make use of in state transitions when mode is changed for retrieval
 transcription_validations = get_transcription_validations()
 
+# IMPORTANT!!! - The FSM builds these strings as crypto.scheme.property
+# but .scheme is trimmed to access the proper attribute in objects in
+# fsm.py: the structure of this transition table is very nice so I'm not
+# fixing that kludge
 state_transitions = {
     "crypto": {
         # We can define all rule transitions for crypto based on scheme
@@ -90,11 +94,12 @@ class TextRetrievalSpec(DNA):
         raise NotImplementedError("random not implemented")
 
 class CryptoSpec(DNA):
-    def __init__(self, scheme, key=None, shift=0, lookup=RUNE_LOOKUP, skips=None, excludes=None):
+    def __init__(self, scheme, key=None, key_index=0, shift=0, lookup=RUNE_LOOKUP, skips=None, excludes=None):
         """ The specification for the cryptography to be performed
         @param scheme   The encryption scheme to use
         @param key      The key for the cipher
         @param shift    The shift value for lookups
+        @param key_index The index into the key to start at
         @param lookup   A dict of <rune->tuple of (list[char/bigram], gematria value)
         @param skips    A dict of <rune->occurence number> to use original unkeyed lookup, key index
                         doesn't increment and is continued on the next character.
@@ -104,6 +109,7 @@ class CryptoSpec(DNA):
         self.scheme = scheme
         self.key = key
         self.shift = shift
+        self.key_index = key_index
         self.lookup = lookup
         self.skips = skips
         self.excludes = excludes
@@ -171,6 +177,8 @@ class SolutionSpec(DNA):
             if self.crypto.key:
                 plaintext = self.crypto.scheme(text,
                                                key=self.crypto.key,
+                                               # TODO: Make use of this in keyed algorithms
+                                               key_index =self.crypto.key_index,
                                                shift=self.crypto.shift,
                                                lookup=self.crypto.lookup,
                                                skips=self.crypto.skips,
