@@ -86,6 +86,7 @@ def known(page=None):
 
 
 def attempt_target():
+    # TODO: Implement more than pages
     """Attempt to decipher specified parts of the Liber Primus"""
     if "pages" in target:
         pages_to_translate = target["pages"]
@@ -99,6 +100,7 @@ def attempt_target():
                         if page in KNOWN_PAGES:
                             known(page)
                         else:
+                            print(f"=== PAGE {page} ===")
                             print("Translation not available for this page.")
                 else:
                     print(f"Invalid page number: {page}")

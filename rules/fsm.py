@@ -1,6 +1,7 @@
 import random
 from util import rsetattr, rgetattr
 from args import get_transcription_validations
+from pprint import pp
 
 validations = get_transcription_validations()
 
@@ -76,6 +77,7 @@ class FSM:
                         if top_rule_k == "retrieval" and second_rule_k == "nums":
                             mode_callable = getattr(top_attr, "mode")
                             name = getattr(mode_callable, "__name__", "Unknown")
+                            pp(validations)
                             if "pages" in name:
                                 v = validations["pages"]["num"]
                             elif "sentences" in name:
