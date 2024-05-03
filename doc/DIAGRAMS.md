@@ -2,5 +2,7 @@
 
 ## Activity (for main genetic algorithm loop)
 
-![activity.puml](activity.puml)
+[PlantUML source here](activity.puml)
+
+![activity.png](activity.png)
 
