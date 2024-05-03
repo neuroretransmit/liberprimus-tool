@@ -4,7 +4,7 @@ import psycopg2
 from psycopg2.errorcodes import UNIQUE_VIOLATION
 from psycopg2 import errors
 
-TABLE_NAME ="solution_attempts"
+# TODO: Use global connection for execution speed
 
 def load_config(filename='database.ini', section='postgresql'):
     parser = ConfigParser()
@@ -29,30 +29,50 @@ def connect(config=load_config()):
             print('Connected to the PostgreSQL server.')
             return conn
     except (psycopg2.DatabaseError, Exception) as error:
-        print(error)
 
-def insert_solution_attempt(section, nums, scheme, key, shift, max_confidence, max_confidence_lang, skips, excludes):
-    conn = connect()
-    try:
-        cursor = conn.cursor()
-        cursor.execute(f'INSERT INTO {TABLE_NAME} (section, nums, scheme, key, shift, max_confidence, max_confidence_lang, skips, excludes) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);',
-                     (section, json.dumps(nums), scheme, key, shift, max_confidence, max_confidence_lang, json.dumps(skips), json.dumps(excludes)))
-        conn.commit()
-    except (psycopg2.DatabaseError, Exception) as error:
         print(error)
-    conn.close()
+class SolutionAttemptsDAO:
+    TABLE_NAME ="solution_attempts"
 
-def solution_exists(section, nums, scheme, key, shift, skips, excludes):
-    conn = connect(load_config())
-    cursor = conn.cursor()
-    skips = json.dumps(skips) if skips else None
-    excludes = json.dumps(excludes) if excludes else None
-    cursor.execute(f"SELECT * FROM {TABLE_NAME} WHERE section = %s AND nums @> %s AND scheme = %s AND key = %s AND shift = %s AND skips @> %s AND excludes @> %s;",
-                 (section, json.dumps(nums), scheme, key, shift, skips, excludes))
-    # The UNIQUE constraint is specified by all these columns so no need for fetchall
-    data = cursor.fetchone()
-    conn.close()
-    if data is not None:
-        return True
-    return False
+    def __init__(self):
+        self.conn = connect()
+
+    def insert_solution_attempt(self, section, nums, scheme, key, shift, max_confidence, max_confidence_lang, skips, excludes):
+        try:
+            cursor = self.conn.cursor()
+            cursor.execute(f"""INSERT INTO {self.TABLE_NAME} (section, nums, scheme, key, shift, max_confidence, max_confidence_lang, skips, excludes)
+                             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);""",
+                         (section, json.dumps(nums), scheme, key, shift, max_confidence, max_confidence_lang, json.dumps(skips), json.dumps(excludes)))
+            self.conn.commit()
+        except (psycopg2.DatabaseError, Exception) as error:
+            print(error)
+
+    def solution_exists(self, section, nums, scheme, key, shift, skips, excludes):
+        cursor = self.conn.cursor()
+        nums = json.dumps(nums)
+        skips = json.dumps(skips) if skips else None
+        excludes = json.dumps(excludes) if excludes else None
+        key_clause = ''
+        if key is None:
+            key_clause += 'AND key IS %s'
+        else:
+            key_clause += 'AND key = %s'
+        sql = f"SELECT * FROM {self.TABLE_NAME} WHERE section = %s AND nums @> %s AND scheme = %s {key_clause} AND shift = %s"
+        # Handle null for JSON columns
+        if skips is None:
+            sql += " AND skips = %s "
+        else:
+            sql += ' AND skips @> %s '
+        if excludes is None:
+            sql += " AND excludes = %s"
+        else:
+            sql += ' AND excludes @> %s'
+        sql += ';'
+        cursor.execute(sql, (section, nums, scheme, key, shift, skips if skips else 'null', excludes if excludes else 'null'))
+
+        # The UNIQUE constraint is specified by all these columns so no need for fetchall
+        data = cursor.fetchone()
+        if data is not None:
+            return True
+        return False
 

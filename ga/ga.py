@@ -1,12 +1,13 @@
 import json
 from specs import SolutionSpec
 from random import getrandbits
-from db.db import insert_solution_attempt, solution_exists
+from db.db import SolutionAttemptsDAO
 from ga.dna import DNA
 
 class GeneticAlgorithm:
-    def __init__(self, target: float, initial_pool:list = []):
+    def __init__(self, target: float, initial_pool:list = [], dao = SolutionAttemptsDAO()):
         self.target = target
+        self.dao = dao
         if initial_pool != []:
             self.pool = initial_pool
         else:
@@ -18,7 +19,6 @@ class GeneticAlgorithm:
             self.pool.sort(key=lambda i: max([v for k, v in i.fitness.items()]), reverse=True)
             # select two fittest
             parents = self.pool[:2]
-            print(f"BEST: {self.pool[0].fitness}")
             if max([v for k, v in parents[0].fitness.items()]) >= self.target:
                 break
             # TODO: finish crossover
@@ -30,14 +30,14 @@ class GeneticAlgorithm:
             excludes = json.dumps(offspring.crypto.excludes) if offspring.crypto.excludes is not None else None
             # Check if solution has been attempted before
             section_name = getattr(offspring.retrieval.mode, '__name__', 'Unknown')
-            if solution_exists(section_name[4:], offspring.retrieval.nums, scheme_name, offspring.crypto.key, offspring.crypto.shift, skips, excludes):
+            if self.dao.solution_exists(section_name[4:], offspring.retrieval.nums, scheme_name, offspring.crypto.key, offspring.crypto.shift, skips, excludes):
                 continue
             # Run the spec and grab fitness
             offspring.rate()
             # Add solution to database
             max_confidence = max([v for k, v in offspring.fitness.items()])
             max_confidence_lang = next(k for k, v in offspring.fitness.items() if v == max_confidence)
-            insert_solution_attempt(section_name[4:], offspring.retrieval.nums, scheme_name, offspring.crypto.key, offspring.crypto.shift, max_confidence, max_confidence_lang, skips, excludes)
+            self.dao.insert_solution_attempt(section_name[4:], offspring.retrieval.nums, scheme_name, offspring.crypto.key, offspring.crypto.shift, max_confidence, max_confidence_lang, skips, excludes)
             # Pop the worst individual out of the genepool in-place
             self.pool.pop()
             # Add new offspring

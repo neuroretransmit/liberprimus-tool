@@ -79,11 +79,18 @@ class FSM:
 
         for k, v in transitions:
             if random.random() < mutation_rate:
+                if ".scheme." in k:
+                    k = k.replace('.scheme', '')
                 print("Mutating:", k)
-                rsetattr(self.current_state, k, v() 
-                         if callable(v) # Call lambda/callable
+                before = rgetattr(self.current_state, k)
+                if callable(before):
+                    before = getattr(before, '__name__', 'Unknown')
+                rsetattr(self.current_state, k, 
+                         v() if callable(v) # Call lambda/callable
                          else (v if not isinstance(v, dict) # Non-dict value
                                else {k1: v1() for k1, v1 in v.items()})) # Call lambda/callable dict value
                 after = rgetattr(self.current_state, k)
-                print("AFTER:", after)
+                if callable(after):
+                    after = getattr(after, '__name__', 'Unknown')
+                print(f"FSM: {before}->{after}")
 
