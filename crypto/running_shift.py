@@ -2,11 +2,11 @@ from crypto.gematria import RUNE_LOOKUP, PLAINTEXT
 
 
 def running_shift(
-    text, key=None, fast=True, lookup=RUNE_LOOKUP, skips=None, excludes=None, shift=0
+    text, key=None, key_index=0, fast=True, lookup=RUNE_LOOKUP, skips=None, excludes=None, shift=0
 ):
     plaintext = ""
     lookup_keys = list(lookup.keys())
-    key_index = 0
+    key_index = key_index
     if skips:
         skip_occurences = {k: 0 for k, _ in skips.items()}
     for c in text:
