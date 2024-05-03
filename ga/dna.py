@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
 
+
 class DNA(ABC):
     crossover_rate = 0.1
-    mutation_rate = .05
+    mutation_rate = 0.05
 
     @abstractmethod
     def crossover(self, *args, **kwargs):

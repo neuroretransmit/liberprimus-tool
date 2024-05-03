@@ -1,5 +1,5 @@
 def gen_primes():
-    """ Generate an infinite sequence of prime numbers. """
+    """Generate an infinite sequence of prime numbers."""
     # Maps composites to primes witnessing their compositeness.
     # This is memory efficient, as the sieve is not "run forward"
     # indefinitely, but only as long as required by the current
@@ -29,6 +29,6 @@ def gen_primes():
 
         q += 1
 
+
 def totients(data):
     return [p - 1 for i, p in zip(range(len(data)), gen_primes())]
-
