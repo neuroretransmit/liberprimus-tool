@@ -9,6 +9,15 @@ from util import find
 # Line     : /
 # Page     : %
 
+ENTITY_LOOKUP = {
+    '%': "page",
+    '/': "line",
+    '§': "chapter",
+    '$': "segment",
+    '&': "paragraph",
+    '.': 'clause',
+    '-': 'word'
+}
 
 def get_entities(nums, delimiter):
     texts = []
@@ -17,8 +26,7 @@ def get_entities(nums, delimiter):
         ends = list(find(text, delimiter))
         for num in nums:
             if num < 0 or num >= len(ends):
-                print(f"Warning: Entity index {num} is out of range.")
-                texts.append("")
+                raise ValueError(f"{ENTITY_LOOKUP[delimiter]} index {num} is out of range.")
             else:
                 texts.append(text[0 if num == 0 else ends[num - 1] : ends[num]])
     return texts
