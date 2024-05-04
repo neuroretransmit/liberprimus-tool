@@ -68,7 +68,7 @@ KNOWN_PAGES = list(SOLUTIONS.keys()) + [13]
 
 def ga():
     # Run infinitely by going over 1
-    ga = GeneticAlgorithm(1.1, initial_pool=[SOLUTIONS[0], SOLUTIONS[1]])
+    ga = GeneticAlgorithm(1.1, initial_pool=[SOLUTIONS[12], SOLUTIONS[1]])
     ga.evolve()
 
 

@@ -50,6 +50,7 @@ class SolutionAttemptsDAO:
         scheme,
         key,
         shift,
+        key_index,
         max_confidence,
         max_confidence_lang,
         skips,
@@ -58,14 +59,15 @@ class SolutionAttemptsDAO:
         try:
             cursor = self.conn.cursor()
             cursor.execute(
-                f"""INSERT INTO {self.TABLE_NAME} (section, nums, scheme, key, shift, max_confidence, max_confidence_lang, skips, excludes)
-                             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);""",
+                f"""INSERT INTO {self.TABLE_NAME} (section, nums, scheme, key, shift, key_index, max_confidence, max_confidence_lang, skips, excludes)
+                             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);""",
                 (
                     section,
                     json.dumps(nums),
                     scheme,
                     key,
                     shift,
+                    key_index,
                     max_confidence,
                     max_confidence_lang,
                     json.dumps(skips),
@@ -76,7 +78,7 @@ class SolutionAttemptsDAO:
         except (psycopg2.DatabaseError, Exception) as error:
             print(error)
 
-    def solution_exists(self, section, nums, scheme, key, shift, skips, excludes):
+    def solution_exists(self, section, nums, scheme, key, shift, key_index, skips, excludes):
         cursor = self.conn.cursor()
         nums = json.dumps(nums)
         skips = json.dumps(skips) if skips else None
@@ -87,6 +89,10 @@ class SolutionAttemptsDAO:
         else:
             key_clause += "AND key = %s"
         sql = f"SELECT * FROM {self.TABLE_NAME} WHERE section = %s AND nums @> %s AND scheme = %s {key_clause} AND shift = %s"
+        if key_index is None:
+            sql += " AND key_index IS NULL"
+        else:
+            sql += " AND key_index = %s"
         # Handle null for JSON columns
         if skips is None:
             sql += " AND skips = %s "
@@ -105,6 +111,7 @@ class SolutionAttemptsDAO:
                 scheme,
                 key,
                 shift,
+                key_index,
                 skips if skips else "null",
                 excludes if excludes else "null",
             ),

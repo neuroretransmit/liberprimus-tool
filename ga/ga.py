@@ -43,19 +43,22 @@ class GeneticAlgorithm:
             )
             # Check if solution has been attempted before
             section_name = getattr(offspring.retrieval.mode, "__name__", "Unknown")
-            print("-----")
             if self.dao.solution_exists(
                 section_name[4:],
                 offspring.retrieval.nums,
                 scheme_name,
                 offspring.crypto.key,
                 offspring.crypto.shift,
+                offspring.crypto.key_index,
                 skips,
                 excludes,
             ):
+                print("-----")
                 continue
             # Run the spec and grab fitness
             offspring.rate()
+            # Fitness prints during rate, show separator here
+            print("-----")
             # Add solution to database
             max_confidence = max([v for k, v in offspring.fitness.items()])
             max_confidence_lang = next(
@@ -67,6 +70,7 @@ class GeneticAlgorithm:
                 scheme_name,
                 offspring.crypto.key,
                 offspring.crypto.shift,
+                offspring.crypto.key_index,
                 max_confidence,
                 max_confidence_lang,
                 skips,

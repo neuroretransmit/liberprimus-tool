@@ -139,11 +139,10 @@ class CryptoSpec(DNA):
                 setattr(offspring, attr, v)
             # TODO: Extract keyable schemes to variable that can be easily referenced
             elif (
-                attr == "scheme"
-                and v in [vigenere]
-                and random.random() < self.crossover_rate
+                # TODO: Need to account for running_key here as well
+                crypto_dict["scheme"] in [vigenere]
             ):
-                if attr == "key" and v and random.random() < self.crossover_rate:
+                if attr == "key" and random.random() < self.crossover_rate:
                     print("crossing over crypto.key")
                     setattr(offspring, attr, v)
                 elif attr == "skips" and random.random() < self.crossover_rate:
@@ -151,6 +150,9 @@ class CryptoSpec(DNA):
                     setattr(offspring, attr, v)
                 elif attr == "excludes" and random.random() < self.crossover_rate:
                     print("crossing over crypto.excludes")
+                    setattr(offspring, attr, v)
+                elif attr == "key_shift" and random.random() < self.crossover_rate:
+                    print("crossing over crypto.key_shift")
                     setattr(offspring, attr, v)
             elif attr == "shift" and random.random() < self.crossover_rate:
                 print("crossing over crypto.shift")
